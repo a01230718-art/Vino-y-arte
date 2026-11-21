@@ -1,13 +1,4 @@
-// ==============================================================================
-// CONFIGURACIÓN DE SUPABASE: VINO & ARTE
-// Si tienes un proyecto en Supabase, pega tu Project URL y Anon Public Key aquí.
-// Si los dejas vacíos, la página guardará los datos localmente sin ningún error.
-// ==============================================================================
-
 window.SUPABASE_CONFIG = {
-  // Ej: "https://xyzcompany.supabase.co"
-  url: "",
-  
-  // Ej: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  anonKey: ""
+  url: "https://hbkidqzahlzxpmsrvyio.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhia2lkcXphaGx6eHBtc3J2eWlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMzk1NjYsImV4cCI6MjExMDYxNTU2Nn0.4gj-tglj-b4R09ucGbujWGvkeXoHkHI2b2fKoEMxpbU"
 };
