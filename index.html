@@ -923,16 +923,20 @@
         </div>
 
         <!-- Dynamic Timeline Container con Pista y Línea de Progreso Viva -->
-        <div id="timeline-container" class="relative ml-6 md:ml-36 space-y-16">
+        <div id="timeline-container" class="relative ml-6 md:ml-36">
           
-          <!-- Pista base fija detrás -->
-          <div class="absolute left-[-1px] top-4 bottom-4 w-[2px] bg-white/10 rounded-full"></div>
-          <!-- Barra de progreso dorada dinámica sincronizada con el scroll -->
-          <div id="timeline-progress-bar" class="absolute left-[-1px] top-4 w-[2px] bg-gradient-to-b from-gold-400 via-gold-500 to-wine-500 rounded-full shadow-[0_0_12px_rgba(212,175,55,0.7)] origin-top" style="height: 0%;"></div>
+          <!-- Riel exacto: nace en el centro del círculo 1 y termina en el centro del círculo 5 -->
+          <div id="timeline-rail" class="pointer-events-none absolute left-[-2px] top-5 w-[2px] z-0 rounded-full overflow-hidden">
+            <!-- Pista base fija detrás -->
+            <div class="absolute inset-0 bg-white/10 rounded-full"></div>
+            <!-- Barra de progreso dorada -> vino sincronizada con el scroll -->
+            <div id="timeline-progress-bar" class="absolute inset-0 bg-gradient-to-b from-gold-400 via-gold-500 to-wine-500 rounded-full shadow-[0_0_12px_rgba(212,175,55,0.75)] origin-top" style="transform: scaleY(0);"></div>
+          </div>
 
+          <div class="space-y-16">
           <!-- Step 1 -->
           <div class="timeline-step relative pl-9 group" data-step="1">
-            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-gold-400 flex items-center justify-center text-xs font-display font-bold text-gold-300 shadow-glow-gold node-active-pulse transition-all duration-500">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 z-10 w-8 h-8 rounded-full bg-noir-900 border border-gold-400 flex items-center justify-center text-xs font-display font-bold text-gold-300 shadow-glow-gold node-active-pulse transition-all duration-500">
               1
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
@@ -948,7 +952,7 @@
 
           <!-- Step 2 -->
           <div class="timeline-step relative pl-9 group" data-step="2">
-            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 z-10 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               2
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
@@ -964,7 +968,7 @@
 
           <!-- Step 3 -->
           <div class="timeline-step relative pl-9 group" data-step="3">
-            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 z-10 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               3
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
@@ -980,7 +984,7 @@
 
           <!-- Step 4 -->
           <div class="timeline-step relative pl-9 group" data-step="4">
-            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 z-10 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               4
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
@@ -996,7 +1000,7 @@
 
           <!-- Step 5 -->
           <div class="timeline-step relative pl-9 group" data-step="5">
-            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 z-10 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               5
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
@@ -1008,6 +1012,7 @@
             <p class="timeline-step-desc text-pearl-300 text-xs sm:text-sm leading-relaxed font-light transition-colors duration-500">
               Un último brindis juntos y entrega de una pequeña tarjeta con los vinos probados y recomendaciones locales.
             </p>
+          </div>
           </div>
 
         </div>
@@ -2054,19 +2059,59 @@
         });
 
         const timelineTrack = document.getElementById('timeline-container');
+        const timelineRail = document.getElementById('timeline-rail');
         const progressBar = document.getElementById('timeline-progress-bar');
 
-        if (timelineTrack && progressBar) {
-          gsap.to(progressBar, {
-            height: '100%',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: timelineTrack,
-              start: 'top 65%',
-              end: 'bottom 65%',
-              scrub: 0.4
+        if (timelineTrack && timelineRail && progressBar) {
+          const timelineSteps = timelineTrack.querySelectorAll('.timeline-step');
+
+          function syncTimelineRailGeometry() {
+            if (timelineSteps.length < 2) return;
+            const firstBadge = timelineSteps[0].querySelector('.timeline-step-badge');
+            const lastBadge = timelineSteps[timelineSteps.length - 1].querySelector('.timeline-step-badge');
+            if (!firstBadge || !lastBadge) return;
+
+            const containerRect = timelineTrack.getBoundingClientRect();
+            const firstRect = firstBadge.getBoundingClientRect();
+            const lastRect = lastBadge.getBoundingClientRect();
+
+            const startY = (firstRect.top - containerRect.top) + (firstRect.height / 2);
+            const endY = (lastRect.top - containerRect.top) + (lastRect.height / 2);
+            const centerX = (firstRect.left - containerRect.left) + (firstRect.width / 2);
+            const railHeight = Math.max(0, endY - startY);
+
+            timelineRail.style.top = `${startY}px`;
+            timelineRail.style.left = `${centerX - 1}px`;
+            timelineRail.style.height = `${railHeight}px`;
+          }
+
+          syncTimelineRailGeometry();
+          window.addEventListener('resize', () => {
+            syncTimelineRailGeometry();
+            ScrollTrigger.refresh();
+          }, { passive: true });
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+              syncTimelineRailGeometry();
+              ScrollTrigger.refresh();
+            });
+          }
+          ScrollTrigger.addEventListener('refreshInit', syncTimelineRailGeometry);
+
+          gsap.fromTo(progressBar,
+            { scaleY: 0 },
+            {
+              scaleY: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: timelineRail,
+                start: 'top 68%',
+                end: 'bottom 68%',
+                scrub: 0.35,
+                invalidateOnRefresh: true
+              }
             }
-          });
+          );
 
           function activateTimelineStep(el) {
             const badge = el.querySelector('.timeline-step-badge');
@@ -2107,7 +2152,7 @@
             }
           }
 
-          document.querySelectorAll('.timeline-step').forEach((stepElem) => {
+          timelineSteps.forEach((stepElem) => {
             ScrollTrigger.create({
               trigger: stepElem,
               start: 'top 68%',
@@ -2115,6 +2160,25 @@
               onLeaveBack: () => deactivateTimelineStep(stepElem)
             });
           });
+        }
+      } else {
+        // Fallback estático para prefers-reduced-motion: muestra la línea completa del círculo 1 al 5
+        const timelineTrack = document.getElementById('timeline-container');
+        const timelineRail = document.getElementById('timeline-rail');
+        const progressBar = document.getElementById('timeline-progress-bar');
+        if (timelineTrack && timelineRail && progressBar) {
+          const steps = timelineTrack.querySelectorAll('.timeline-step');
+          if (steps.length >= 2) {
+            const cRect = timelineTrack.getBoundingClientRect();
+            const fRect = steps[0].querySelector('.timeline-step-badge')?.getBoundingClientRect();
+            const lRect = steps[steps.length - 1].querySelector('.timeline-step-badge')?.getBoundingClientRect();
+            if (fRect && lRect) {
+              timelineRail.style.top = `${(fRect.top - cRect.top) + fRect.height / 2}px`;
+              timelineRail.style.left = `${(fRect.left - cRect.left) + fRect.width / 2 - 1}px`;
+              timelineRail.style.height = `${Math.max(0, ((lRect.top - cRect.top) + lRect.height / 2) - ((fRect.top - cRect.top) + fRect.height / 2))}px`;
+              progressBar.style.transform = 'scaleY(1)';
+            }
+          }
         }
       }
 
