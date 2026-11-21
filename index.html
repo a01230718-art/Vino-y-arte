@@ -71,11 +71,32 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- GSAP 3.12 & ScrollTrigger (Creative Developer & Apple-inspired storytelling) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lenis Smooth Scroll (Ultra-ligero, inercia sutil, preserva scroll nativo y accesibilidad) -->
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
   <!-- Supabase JS Client & Config -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
 
   <style>
+    /* Lenis Smooth Scroll Core */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
     ::selection {
       background-color: #7E1425;
       color: #F5E6BE;
@@ -88,23 +109,25 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Glassmorphism Refinado */
     .glass-noir {
-      background: rgba(11, 11, 14, 0.85);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(212, 175, 55, 0.15);
+      background: rgba(11, 11, 14, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(212, 175, 55, 0.16);
     }
 
     .glass-noir-card {
-      background: linear-gradient(150deg, rgba(22, 22, 29, 0.85) 0%, rgba(11, 11, 14, 0.98) 100%);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(155deg, rgba(22, 22, 29, 0.78) 0%, rgba(10, 10, 13, 0.94) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(245, 230, 190, 0.12);
+      transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .glass-noir-card:hover {
-      border-color: rgba(212, 175, 55, 0.4);
-      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.7), 0 0 30px -5px rgba(126, 20, 37, 0.3);
+      border-color: rgba(212, 175, 55, 0.38);
+      box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(126, 20, 37, 0.3);
     }
 
     .gold-gradient-text {
@@ -117,14 +140,210 @@
       text-shadow: 0 4px 40px rgba(0, 0, 0, 1), 0 2px 16px rgba(0, 0, 0, 0.98), 0 0 10px rgba(0, 0, 0, 0.9);
     }
 
+    /* Hero Editorial Cinemático (Copa protagonista + negro puro) */
+    #hero {
+      background-color: #000000;
+    }
+
+    .hero-stage-mask-desktop {
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 84%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 84%, transparent 100%);
+    }
+
+    /* Empareja el encuadre ampliado del póster inicial con el del canvas para transición sin saltos */
+    #hero-poster-img {
+      transform: scale(1.08) translateY(4%);
+      transform-origin: center center;
+    }
+
+    @media (min-width: 1024px) {
+      #hero-poster-img {
+        transform: scale(1.48) translateY(-13%);
+        transform-origin: left top;
+      }
+    }
+
+    @media (max-width: 1023px) {
+      .hero-stage-mask-desktop {
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 89%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 89%, transparent 100%);
+      }
+    }
+
+    .hero-wine-aura {
+      background: radial-gradient(
+        circle at center,
+        rgba(126, 20, 37, 0.38) 0%,
+        rgba(92, 14, 27, 0.16) 42%,
+        rgba(0, 0, 0, 0) 72%
+      );
+      will-change: opacity, transform;
+    }
+
+    .hero-gold-aura {
+      background: radial-gradient(
+        circle at center,
+        rgba(212, 175, 55, 0.11) 0%,
+        rgba(212, 175, 55, 0.03) 45%,
+        rgba(0, 0, 0, 0) 72%
+      );
+    }
+
+    @keyframes scrollLinePulse {
+      0%, 100% {
+        transform: scaleY(0.45);
+        opacity: 0.35;
+      }
+      50% {
+        transform: scaleY(1);
+        opacity: 0.95;
+      }
+    }
+
+    .hero-scroll-line {
+      transform-origin: top center;
+      animation: scrollLinePulse 2.4s ease-in-out infinite;
+    }
+
+    /* Botón Vino con Micro-interacción Apple */
     .wine-gradient-btn {
       background: linear-gradient(135deg, #881628 0%, #4A0B15 100%);
       box-shadow: 0 4px 25px rgba(126, 20, 37, 0.45);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .wine-gradient-btn:hover {
-      background: linear-gradient(135deg, #A31C32 0%, #600E1D 100%);
-      box-shadow: 0 6px 35px rgba(163, 28, 50, 0.65);
+      background: linear-gradient(135deg, #9E1A30 0%, #5C0D1A 100%);
+      box-shadow: 0 8px 35px rgba(163, 28, 50, 0.65), 0 0 25px rgba(212, 175, 55, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .wine-gradient-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    /* Brillo Líquido (Button Sheen) */
+    .btn-sheen {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-sheen::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0) 20%,
+        rgba(255, 255, 255, 0.22) 50%,
+        rgba(255, 255, 255, 0) 80%
+      );
+      transform: rotate(25deg);
+      pointer-events: none;
+      transition: none;
+    }
+
+    .btn-sheen:hover::after {
+      animation: sheenEffect 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes sheenEffect {
+      0% {
+        left: -60%;
+      }
+      100% {
+        left: 140%;
+      }
+    }
+
+    /* Spotlight Cursor Glow en tarjetas */
+    .spotlight-card {
+      position: relative;
+    }
+
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(
+        400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(212, 175, 55, 0.2),
+        transparent 65%
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .spotlight-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Animación de pulso para nodos activos de timeline */
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.8), 0 0 45px rgba(126, 20, 37, 0.5);
+      }
+    }
+
+    .node-active-pulse {
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+
+    /* Visor Lightbox */
+    #museum-lightbox {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #museum-lightbox.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #museum-lightbox .lightbox-img-wrapper {
+      transform: scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #museum-lightbox.active .lightbox-img-wrapper {
+      transform: scale(1);
+    }
+
+    /* Transición de acordeón FAQ ultra suave */
+    .faq-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+
+    .faq-content.open {
+      opacity: 1;
+    }
+
+    /* Indicador flotante en móvil */
+    .mobile-float-pill {
+      transform: translateY(100px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .mobile-float-pill.visible {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
     }
   </style>
 </head>
@@ -200,88 +419,125 @@
 
   <main class="relative z-10">
 
-    <!-- HERO SECTION (Imagen claramente visible de vino y arte + letras nítidas) -->
-    <section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden px-6 py-24 lg:py-36">
-      
-      <!-- Fondo: Imagen claramente visible de copas y vino con iluminación cálida -->
-      <div class="absolute inset-0 z-0">
-        <img 
-          src="images/wine-toast.jpg" 
-          alt="Copas de vino y brindis en un ambiente elegante" 
-          class="w-full h-full object-cover object-center opacity-80 filter brightness-90 contrast-105"
-        />
-        <!-- Viñeta suave en los bordes para mantener la foto de vino visible sin perder contraste -->
-        <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/30 to-noir-950/60"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-noir-950/60 via-transparent to-noir-950/60"></div>
+    <!-- HERO SECTION (Portada Editorial Cinemática vinculada al scroll) -->
+    <section id="hero" class="relative w-full h-[calc(100svh-10.25rem)] min-h-[540px] lg:h-[calc(100vh-6rem)] lg:min-h-[600px] bg-black overflow-hidden">
+
+      <!-- Escenario del video/canvas: copa protagonista ampliada y desplazada hacia el centro-izquierda en escritorio -->
+      <div id="hero-visual-stage" class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <!-- Halo borgoña sutil detrás de la copa (se intensifica suavemente al llenarse) -->
+        <div
+          id="hero-wine-aura"
+          class="hero-wine-aura absolute left-1/2 top-[53%] -translate-x-1/2 -translate-y-1/2 lg:left-[26%] xl:left-[28%] lg:top-[52%] w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[680px] lg:h-[680px] rounded-full blur-[76px] opacity-28"
+        ></div>
+
+        <!-- Reflejo dorado ambiental muy sutil detrás del bloque tipográfico (solo escritorio) -->
+        <div
+          class="hero-gold-aura hidden lg:block absolute left-[54%] top-[48%] -translate-y-1/2 w-[620px] h-[480px] rounded-full blur-[100px] opacity-90"
+        ></div>
+
+        <!-- Contenedor escalable del canvas + póster instantáneo (sin deformar 9:16) -->
+        <div id="hero-media-wrap" class="hero-stage-mask-desktop absolute inset-0 lg:left-[3%] xl:left-[6%] 2xl:left-[9%] lg:right-auto lg:w-[54%] xl:w-[50%] will-change-transform">
+          <img
+            id="hero-poster-img"
+            src="images/hero-frames/desktop/frame_000.jpg"
+            alt="Copa de cristal recibiendo vino tinto sobre fondo negro"
+            fetchpriority="high"
+            decoding="async"
+            class="w-full h-full object-contain object-center lg:object-left select-none transition-opacity duration-300"
+          />
+          <canvas
+            id="hero-canvas"
+            aria-hidden="true"
+            class="absolute inset-0 w-full h-full opacity-0 transition-opacity duration-300"
+          ></canvas>
+        </div>
+
+        <!-- Viñetas sutiles para legibilidad pura en móvil (zona superior/inferior) y fusión con la siguiente sección -->
+        <div class="lg:hidden absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-black via-black/75 to-transparent"></div>
+        <div class="lg:hidden absolute inset-x-0 bottom-0 h-[32%] bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-noir-950 via-noir-950/45 to-transparent"></div>
       </div>
 
-      <!-- Hero Content sin caja opaca: el fondo de vino se ve claramente y las letras se leen a la perfección -->
-      <div class="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
+      <!-- Composición Editorial:
+           - Escritorio: composición de campaña de lujo donde copa y titular forman un solo bloque visual equilibrado
+           - Móvil: titular arriba y descripción + CTA abajo, dejando la copa despejada en el centro -->
+      <div class="relative z-10 h-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 flex flex-col justify-between lg:justify-center pt-3 pb-5 sm:pt-6 sm:pb-8 lg:py-0">
+        <div id="hero-editorial-col" class="lg:ml-[42%] xl:ml-[41%] lg:w-[56%] xl:w-[55%] max-w-2xl h-full lg:h-auto flex flex-col justify-between lg:justify-center text-center lg:text-left will-change-transform">
 
-        <!-- Headline flotante: elegancia editorial clásica como antes -->
-        <div class="relative mb-10 max-w-4xl">
-          <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-[0.06em] text-white leading-[1.12] hero-title-shadow">
-            EL ARTE SE ENCUENTRA <br class="hidden sm:inline" />
-            <span class="font-serif italic font-normal text-gold-400 tracking-normal block mt-1">
-              con el vino.
-            </span>
-          </h1>
+          <!-- Bloque superior (Micro-etiqueta + Titular de campaña) -->
+          <div class="hero-anim-elem">
+            <div class="inline-flex items-center justify-center lg:justify-start gap-3.5 mb-2.5 sm:mb-5 lg:mb-6">
+              <span class="hidden lg:inline-block w-10 h-px bg-gold-400/60"></span>
+              <span class="text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.4em] text-gold-300/95 font-medium">
+                Museo Arocena · Torreón
+              </span>
+            </div>
 
-          <p class="max-w-2xl mx-auto text-base sm:text-lg lg:text-xl text-pearl-100 font-light leading-relaxed mt-6 hero-title-shadow">
-            Disfruta del <strong class="font-medium text-gold-300">Museo Arocena</strong> a puerta cerrada. Una velada especial donde las salas de arte se combinan con una cata de vinos, deliciosos bocadillos y un espacio relajado para platicar y convivir.
-          </p>
+            <h1 class="font-display text-[1.85rem] sm:text-5xl lg:text-[4.1rem] xl:text-[4.9rem] 2xl:text-[5.35rem] font-normal tracking-[0.07em] text-pearl-100 leading-[1.06] hero-title-shadow">
+              EL ARTE SE ENCUENTRA
+              <span class="font-serif italic font-normal gold-gradient-text tracking-normal block mt-0.5 sm:mt-2 text-[2.2rem] sm:text-[3.6rem] lg:text-[4.75rem] xl:text-[5.6rem] 2xl:text-[6.1rem] leading-[1.02]">
+                con el vino.
+              </span>
+            </h1>
+          </div>
+
+          <!-- Bloque inferior (Descripción editorial breve + Único botón principal) -->
+          <div class="hero-anim-elem lg:mt-8 flex flex-col items-center lg:items-start">
+            <p class="max-w-md lg:max-w-xl text-xs sm:text-base lg:text-lg xl:text-xl text-pearl-200/90 font-light leading-relaxed hero-title-shadow">
+              Una velada íntima a puerta cerrada entre salas de arte, cata de vinos y conversación sin prisas.
+            </p>
+
+            <div class="mt-4 sm:mt-7 lg:mt-9">
+              <a
+                id="hero-primary-cta"
+                href="#registro"
+                class="inline-flex items-center justify-center px-9 sm:px-11 py-4 rounded-full text-[11px] sm:text-xs uppercase tracking-[0.28em] font-semibold text-pearl-100 wine-gradient-btn btn-sheen border border-gold-400/40 hover:border-gold-300/75 transition-all duration-300"
+              >
+                <span>Quiero Conocer Más</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 ml-3 text-gold-300"></i>
+              </a>
+            </div>
+          </div>
+
         </div>
-
-        <!-- CTAs -->
-        <div class="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
-          <a href="#registro" class="w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 rounded-full text-xs uppercase tracking-[0.25em] font-semibold text-pearl-100 wine-gradient-btn hover:scale-105 transition-all duration-300">
-            Quiero Conocer Más
-            <i data-lucide="arrow-right" class="w-4 h-4 ml-2.5 text-gold-300"></i>
-          </a>
-          <a href="#salas-museo" class="w-full sm:w-auto inline-flex items-center justify-center px-9 py-4 rounded-full text-xs uppercase tracking-[0.25em] font-medium text-pearl-200 hover:text-gold-300 border border-white/20 hover:border-gold-500/50 bg-noir-850/80 backdrop-blur-md hover:bg-noir-800 transition-all duration-300">
-            Conocer las Salas
-          </a>
-        </div>
-
-        <!-- Metric Badges Strip (Actualizado: 'A Puerta Cerrada' en vez de nocturna) -->
-        <div class="mt-16 pt-10 border-t border-white/10 w-full grid grid-cols-2 md:grid-cols-4 gap-8 text-center bg-noir-950/60 backdrop-blur-sm rounded-2xl p-6">
-          <div>
-            <p class="font-display text-2xl lg:text-3xl text-gold-400 font-semibold tracking-wider">15</p>
-            <p class="text-[10px] uppercase tracking-[0.25em] text-pearl-400 mt-1">Personas por cata</p>
-          </div>
-          <div>
-            <!-- Reemplazo de 'Nocturna' por 'A Puerta Cerrada' -->
-            <p class="font-display text-2xl lg:text-3xl text-gold-400 font-semibold tracking-wider">A Puerta Cerrada</p>
-            <p class="text-[10px] uppercase tracking-[0.25em] text-pearl-400 mt-1">Acceso Exclusivo</p>
-          </div>
-          <div>
-            <p class="font-display text-2xl lg:text-3xl text-gold-400 font-semibold tracking-wider">Coahuila</p>
-            <p class="text-[10px] uppercase tracking-[0.25em] text-pearl-400 mt-1">Vinos y tradición</p>
-          </div>
-          <div>
-            <p class="font-display text-2xl lg:text-3xl text-gold-400 font-semibold tracking-wider">Museo Arocena</p>
-            <p class="text-[10px] uppercase tracking-[0.25em] text-pearl-400 mt-1">Torreón, Coahuila</p>
-          </div>
-        </div>
-
       </div>
+
+      <!-- Indicador mínimo de scroll (desaparece suavemente al iniciar el recorrido) -->
+      <div
+        id="hero-scroll-cue"
+        aria-hidden="true"
+        class="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 lg:left-auto lg:right-14 lg:translate-x-0 z-20 hidden sm:flex flex-col items-center gap-2 opacity-75 transition-opacity duration-500"
+      >
+        <span class="text-[9px] uppercase tracking-[0.35em] text-gold-300/80 font-medium">Desliza</span>
+        <span class="hero-scroll-line block w-px h-8 bg-gradient-to-b from-gold-400 via-gold-400/50 to-transparent"></span>
+      </div>
+
     </section>
 
     <!-- SECTION 1: SOBRE LA EXPERIENCIA ("Una forma diferente de disfrutar el museo...") -->
-    <section id="experiencia" class="py-28 px-6 lg:px-12 bg-noir-900 border-y border-white/5 relative">
+    <section id="experiencia" class="py-28 px-6 lg:px-12 bg-noir-900 border-y border-white/5 relative overflow-hidden">
       <div class="max-w-6xl mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          <!-- Imagen de la gran sala de exhibición del Museo Arocena -->
-          <div class="lg:col-span-6 relative">
-            <div class="relative rounded-2xl overflow-hidden border border-gold-500/25 shadow-2xl group">
+          <!-- Imagen de la gran sala de exhibición del Museo Arocena con Lightbox Trigger -->
+          <div class="lg:col-span-6 relative scroll-reveal">
+            <div 
+              class="relative rounded-2xl overflow-hidden border border-gold-500/25 shadow-2xl group cursor-pointer lightbox-trigger"
+              data-lightbox-index="0"
+              title="Clic para ampliar sala del museo"
+            >
               <img 
                 src="images/arocena-sala-valencianos.jpg" 
                 alt="Salas de exhibición del Museo Arocena en Torreón" 
-                class="w-full h-[460px] object-cover group-hover:scale-105 transition-transform duration-700"
+                class="w-full h-[460px] object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/20 to-transparent"></div>
               
+              <!-- Badge de expansión interactiva -->
+              <div class="absolute top-4 right-4 bg-noir-950/80 backdrop-blur-md p-2 rounded-full border border-gold-500/30 text-gold-300 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all shadow-lg">
+                <i data-lucide="maximize-2" class="w-4 h-4"></i>
+              </div>
+
               <div class="absolute bottom-6 left-6 right-6 p-5 glass-noir rounded-xl border border-gold-500/30">
                 <div class="flex items-center gap-2 text-gold-400 mb-1">
                   <i data-lucide="landmark" class="w-4 h-4"></i>
@@ -295,7 +551,7 @@
           </div>
 
           <!-- Texto: Cambiado de "fresca" a "diferente" según solicitud -->
-          <div class="lg:col-span-6 flex flex-col justify-center">
+          <div class="lg:col-span-6 flex flex-col justify-center scroll-reveal">
             <span class="text-xs font-semibold uppercase tracking-[0.3em] text-gold-400 mb-4 block">
               La Idea del Proyecto
             </span>
@@ -324,12 +580,12 @@
       </div>
     </section>
 
-    <!-- SECTION 2: ¿QUÉ VIVIRÁS? (Variedad fotográfica: Arte, Vino, Barricas y Gente Convivendo) -->
-    <section id="que-viviras" class="py-32 px-6 lg:px-12 bg-noir-950 relative">
+    <!-- SECTION 2: ¿QUÉ VIVIRÁS? (Variedad fotográfica & Spotlight Cards) -->
+    <section id="que-viviras" class="py-32 px-6 lg:px-12 bg-noir-950 relative overflow-hidden">
       <div class="max-w-7xl mx-auto">
         
         <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-20">
+        <div class="text-center max-w-3xl mx-auto mb-20 scroll-reveal">
           <span class="text-xs font-semibold uppercase tracking-[0.3em] text-gold-400 mb-3 block">
             Qué esperar de la velada
           </span>
@@ -341,12 +597,16 @@
           </p>
         </div>
 
-        <!-- 4 Cards Grid con imágenes variadas (NO repetitivas de vino) -->
+        <!-- 4 Cards Grid con interactividad y efecto spotlight -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
           
           <!-- Card 1: LAS SALAS (Foto de sala del museo y esculturas) -->
-          <article class="glass-noir-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
-            <div class="relative h-64 overflow-hidden bg-noir-900">
+          <article class="glass-noir-card spotlight-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300 scroll-reveal">
+            <div 
+              class="relative h-64 overflow-hidden bg-noir-900 cursor-pointer lightbox-trigger"
+              data-lightbox-index="1"
+              title="Clic para ampliar imagen"
+            >
               <img 
                 src="images/arocena-sala-escultura.jpg" 
                 alt="Sala de exhibición con esculturas y pinturas en el Museo Arocena" 
@@ -356,6 +616,9 @@
               <span class="absolute top-4 left-4 bg-noir-950/85 backdrop-blur-md text-gold-300 text-[10px] uppercase tracking-[0.2em] px-3.5 py-1 rounded-full border border-gold-500/30">
                 01 · Las Salas
               </span>
+              <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </div>
             </div>
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
@@ -374,8 +637,12 @@
           </article>
 
           <!-- Card 2: LA CATA (Servicio de vino) -->
-          <article class="glass-noir-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
-            <div class="relative h-64 overflow-hidden bg-noir-900">
+          <article class="glass-noir-card spotlight-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300 scroll-reveal">
+            <div 
+              class="relative h-64 overflow-hidden bg-noir-900 cursor-pointer lightbox-trigger"
+              data-lightbox-index="6"
+              title="Clic para ampliar imagen"
+            >
               <img 
                 src="images/hero-wine-pour.webp" 
                 alt="Servicio de vino en copas transparentes" 
@@ -385,6 +652,9 @@
               <span class="absolute top-4 left-4 bg-noir-950/85 backdrop-blur-md text-gold-300 text-[10px] uppercase tracking-[0.2em] px-3.5 py-1 rounded-full border border-gold-500/30">
                 02 · La Cata
               </span>
+              <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </div>
             </div>
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
@@ -403,8 +673,12 @@
           </article>
 
           <!-- Card 3: SABORES LOCALES (Cavas y barricas de roble) -->
-          <article class="glass-noir-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
-            <div class="relative h-64 overflow-hidden bg-noir-900">
+          <article class="glass-noir-card spotlight-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300 scroll-reveal">
+            <div 
+              class="relative h-64 overflow-hidden bg-noir-900 cursor-pointer lightbox-trigger"
+              data-lightbox-index="4"
+              title="Clic para ampliar imagen"
+            >
               <img 
                 src="images/coahuila-wine-bottles.jpg" 
                 alt="Cavas de Coahuila con barricas de roble" 
@@ -414,6 +688,9 @@
               <span class="absolute top-4 left-4 bg-noir-950/85 backdrop-blur-md text-gold-300 text-[10px] uppercase tracking-[0.2em] px-3.5 py-1 rounded-full border border-gold-500/30">
                 03 · Sabores Locales
               </span>
+              <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </div>
             </div>
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
@@ -431,9 +708,13 @@
             </div>
           </article>
 
-          <!-- Card 4: CONVIVENCIA (IMAGEN CAMBIADA: Ahora muestra a un grupo de personas conviviendo en el museo en vez de copas repetidas) -->
-          <article class="glass-noir-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
-            <div class="relative h-64 overflow-hidden bg-noir-900">
+          <!-- Card 4: CONVIVENCIA (Grupo conviviendo en museo) -->
+          <article class="glass-noir-card spotlight-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300 scroll-reveal">
+            <div 
+              class="relative h-64 overflow-hidden bg-noir-900 cursor-pointer lightbox-trigger"
+              data-lightbox-index="3"
+              title="Clic para ampliar imagen"
+            >
               <img 
                 src="images/museum-night-crowd.jpg" 
                 alt="Grupo de personas conviviendo y disfrutando en la sala del museo" 
@@ -443,6 +724,9 @@
               <span class="absolute top-4 left-4 bg-noir-950/85 backdrop-blur-md text-gold-300 text-[10px] uppercase tracking-[0.2em] px-3.5 py-1 rounded-full border border-gold-500/30">
                 04 · Convivencia
               </span>
+              <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </div>
             </div>
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
@@ -465,11 +749,11 @@
       </div>
     </section>
 
-    <!-- SECTION 3: GALERÍA DE LAS SALAS DEL MUSEO AROCENA -->
-    <section id="salas-museo" class="py-28 px-6 lg:px-12 bg-noir-900 border-t border-white/5">
+    <!-- SECTION 3: GALERÍA DE LAS SALAS DEL MUSEO AROCENA (Interactivo con Visor Lightbox) -->
+    <section id="salas-museo" class="py-28 px-6 lg:px-12 bg-noir-900 border-t border-white/5 relative overflow-hidden">
       <div class="max-w-7xl mx-auto">
         
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 scroll-reveal">
           <div>
             <span class="text-xs font-semibold uppercase tracking-[0.3em] text-gold-400 mb-2 block">
               Recorrido Visual
@@ -479,21 +763,30 @@
             </h2>
           </div>
           <p class="text-pearl-400 text-xs sm:text-sm max-w-md font-light">
-            Conoce los espacios reales del Museo Arocena donde se llevaría a cabo este encuentro íntimo de arte y vino.
+            Conoce los espacios reales del Museo Arocena donde se llevaría a cabo este encuentro íntimo de arte y vino. <span class="text-gold-400 block mt-1 text-[11px] font-medium">✦ Haz clic en cualquier imagen para abrir el visor en alta resolución.</span>
           </p>
         </div>
 
-        <!-- Grid con las fotos reales del museo -->
+        <!-- Grid interactivo con visor lightbox integrado -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
           
           <!-- Foto 1: Sala de Arte Moderno con esculturas y gran pintura (7 cols) -->
-          <div class="md:col-span-7 relative rounded-3xl overflow-hidden border border-white/10 group h-[440px]">
+          <div 
+            class="md:col-span-7 relative rounded-3xl overflow-hidden border border-white/10 hover:border-gold-500/40 group h-[440px] cursor-pointer lightbox-trigger transition-all duration-500 scroll-reveal"
+            data-lightbox-index="1"
+            title="Clic para ampliar vista de sala"
+          >
             <img 
               src="images/arocena-sala-escultura.jpg" 
               alt="Sala con escultura y pintura monumental en Museo Arocena" 
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/25 to-transparent"></div>
+            
+            <div class="absolute top-5 right-5 bg-noir-950/80 backdrop-blur-md p-2.5 rounded-full border border-gold-500/30 text-gold-300 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all shadow-xl">
+              <i data-lucide="maximize-2" class="w-4 h-4"></i>
+            </div>
+
             <div class="absolute bottom-6 left-6 right-6">
               <span class="text-[10px] uppercase tracking-[0.25em] text-gold-400 font-semibold block mb-1">
                 Sala de Arte & Escultura
@@ -508,26 +801,40 @@
           <div class="md:col-span-5 grid grid-cols-1 gap-6">
             
             <!-- Foto 2: Sala de Arte Moderno -->
-            <div class="relative rounded-3xl overflow-hidden border border-white/10 group h-[208px]">
+            <div 
+              class="relative rounded-3xl overflow-hidden border border-white/10 hover:border-gold-500/40 group h-[208px] cursor-pointer lightbox-trigger transition-all duration-500 scroll-reveal"
+              data-lightbox-index="2"
+              title="Clic para ampliar"
+            >
               <img 
                 src="images/arocena-sala-moderna.jpg" 
                 alt="Galería de arte contemporáneo en Museo Arocena" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </div>
               <div class="absolute bottom-4 left-6">
                 <span class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-semibold">Salas Contemporáneas</span>
               </div>
             </div>
 
             <!-- Foto 3: Gran Sala de Arte Histórico / Valencianos -->
-            <div class="relative rounded-3xl overflow-hidden border border-white/10 group h-[208px]">
+            <div 
+              class="relative rounded-3xl overflow-hidden border border-white/10 hover:border-gold-500/40 group h-[208px] cursor-pointer lightbox-trigger transition-all duration-500 scroll-reveal"
+              data-lightbox-index="0"
+              title="Clic para ampliar"
+            >
               <img 
                 src="images/arocena-sala-valencianos.jpg" 
                 alt="Exhibición histórica en Museo Arocena" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </div>
               <div class="absolute bottom-4 left-6">
                 <span class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-semibold">Salas Históricas y Mobiliario</span>
               </div>
@@ -536,37 +843,58 @@
           </div>
 
           <!-- Fila adicional con fotos complementarias de ambiente y cata -->
-          <div class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 group h-[220px]">
+          <div 
+            class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 hover:border-gold-500/40 group h-[220px] cursor-pointer lightbox-trigger transition-all duration-500 scroll-reveal"
+            data-lightbox-index="3"
+            title="Clic para ampliar"
+          >
             <img 
               src="images/museum-night-crowd.jpg" 
               alt="Ambiente en sala de museo de noche" 
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-transparent to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+            </div>
             <div class="absolute bottom-4 left-5">
-              <span class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-semibold">Gente Convivendo</span>
+              <span class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-semibold">Gente Conviviendo</span>
             </div>
           </div>
 
-          <div class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 group h-[220px]">
+          <div 
+            class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 hover:border-gold-500/40 group h-[220px] cursor-pointer lightbox-trigger transition-all duration-500 scroll-reveal"
+            data-lightbox-index="4"
+            title="Clic para ampliar"
+          >
             <img 
               src="images/coahuila-wine-bottles.jpg" 
               alt="Botellas y barricas de Coahuila" 
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-transparent to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+            </div>
             <div class="absolute bottom-4 left-5">
               <span class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-semibold">Vinos de Nuestra Región</span>
             </div>
           </div>
 
-          <div class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 group h-[220px]">
+          <div 
+            class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 hover:border-gold-500/40 group h-[220px] cursor-pointer lightbox-trigger transition-all duration-500 scroll-reveal"
+            data-lightbox-index="5"
+            title="Clic para ampliar"
+          >
             <img 
               src="images/wine-toast.jpg" 
               alt="Brindis y convivencia a puerta cerrada" 
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-transparent to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-noir-950/70 p-1.5 rounded-full text-gold-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+            </div>
             <div class="absolute bottom-4 left-5">
               <span class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-semibold">El Brindis</span>
             </div>
@@ -577,11 +905,11 @@
       </div>
     </section>
 
-    <!-- SECTION 4: EL RECORRIDO PASO A PASO -->
-    <section id="recorrido" class="py-28 px-6 lg:px-12 bg-noir-950 border-t border-white/5">
+    <!-- SECTION 4: EL RECORRIDO PASO A PASO (Línea de tiempo interactiva viva) -->
+    <section id="recorrido" class="py-28 px-6 lg:px-12 bg-noir-950 border-t border-white/5 relative overflow-hidden">
       <div class="max-w-4xl mx-auto">
         
-        <div class="text-center mb-20">
+        <div class="text-center mb-20 scroll-reveal">
           <span class="text-xs font-semibold uppercase tracking-[0.3em] text-gold-400 mb-3 block">
             Cómo funcionará la velada
           </span>
@@ -593,84 +921,90 @@
           </p>
         </div>
 
-        <div class="relative border-l border-gold-500/20 ml-6 md:ml-36 space-y-14">
+        <!-- Dynamic Timeline Container con Pista y Línea de Progreso Viva -->
+        <div id="timeline-container" class="relative ml-6 md:ml-36 space-y-16">
           
+          <!-- Pista base fija detrás -->
+          <div class="absolute left-[-1px] top-4 bottom-4 w-[2px] bg-white/10 rounded-full"></div>
+          <!-- Barra de progreso dorada dinámica sincronizada con el scroll -->
+          <div id="timeline-progress-bar" class="absolute left-[-1px] top-4 w-[2px] bg-gradient-to-b from-gold-400 via-gold-500 to-wine-500 rounded-full shadow-[0_0_12px_rgba(212,175,55,0.7)] origin-top" style="height: 0%;"></div>
+
           <!-- Step 1 -->
-          <div class="relative pl-9 group">
-            <span class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-gold-500 flex items-center justify-center text-xs font-display font-bold text-gold-400 shadow-glow-gold">
+          <div class="timeline-step relative pl-9 group" data-step="1">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-gold-400 flex items-center justify-center text-xs font-display font-bold text-gold-300 shadow-glow-gold node-active-pulse transition-all duration-500">
               1
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
-              <span class="text-[10px] uppercase tracking-[0.25em] text-gold-500 font-semibold">Llegada</span>
+              <span class="timeline-step-tag text-[10px] uppercase tracking-[0.25em] text-gold-400 font-semibold transition-colors duration-500">Llegada</span>
             </div>
-            <h3 class="font-display text-2xl text-pearl-100 font-medium mb-1 tracking-wide">
+            <h3 class="timeline-step-title font-display text-2xl text-pearl-100 font-medium mb-1 tracking-wide transition-colors duration-500">
               Bienvenida con Copa de Cortesía
             </h3>
-            <p class="text-pearl-300 text-xs sm:text-sm leading-relaxed font-light">
+            <p class="timeline-step-desc text-pearl-300 text-xs sm:text-sm leading-relaxed font-light transition-colors duration-500">
               Recepción de los 15 asistentes en la entrada del museo para dar inicio a la noche con una copa de bienvenida.
             </p>
           </div>
 
           <!-- Step 2 -->
-          <div class="relative pl-9 group">
-            <span class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-gold-500 flex items-center justify-center text-xs font-display font-bold text-gold-400">
+          <div class="timeline-step relative pl-9 group" data-step="2">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               2
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
-              <span class="text-[10px] uppercase tracking-[0.25em] text-gold-500 font-semibold">Paseo</span>
+              <span class="timeline-step-tag text-[10px] uppercase tracking-[0.25em] text-pearl-400 font-semibold transition-colors duration-500">Paseo</span>
             </div>
-            <h3 class="font-display text-2xl text-pearl-100 font-medium mb-1 tracking-wide">
+            <h3 class="timeline-step-title font-display text-2xl text-pearl-200 font-medium mb-1 tracking-wide transition-colors duration-500">
               Paseo Guiado por las Salas
             </h3>
-            <p class="text-pearl-300 text-xs sm:text-sm leading-relaxed font-light">
+            <p class="timeline-step-desc text-pearl-300 text-xs sm:text-sm leading-relaxed font-light transition-colors duration-500">
               Caminamos tranquilamente por salas seleccionadas del Museo Arocena a puerta cerrada, conociendo detalles curiosos de las piezas.
             </p>
           </div>
 
           <!-- Step 3 -->
-          <div class="relative pl-9 group">
-            <span class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-wine-700 border border-gold-400 flex items-center justify-center text-xs font-display font-bold text-gold-300 shadow-glow-wine">
+          <div class="timeline-step relative pl-9 group" data-step="3">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               3
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
-              <span class="text-[10px] uppercase tracking-[0.25em] text-wine-500 font-bold">La Cata</span>
+              <span class="timeline-step-tag text-[10px] uppercase tracking-[0.25em] text-pearl-400 font-semibold transition-colors duration-500">La Cata</span>
             </div>
-            <h3 class="font-display text-2xl text-gold-300 font-medium mb-1 tracking-wide">
+            <h3 class="timeline-step-title font-display text-2xl text-pearl-200 font-medium mb-1 tracking-wide transition-colors duration-500">
               Cata de Vinos y Bocadillos
             </h3>
-            <p class="text-pearl-300 text-xs sm:text-sm leading-relaxed font-light">
+            <p class="timeline-step-desc text-pearl-300 text-xs sm:text-sm leading-relaxed font-light transition-colors duration-500">
               El momento central: degustamos diferentes vinos explicados de forma amena y los acompañamos con bocadillos preparados especialmente.
             </p>
           </div>
 
           <!-- Step 4 -->
-          <div class="relative pl-9 group">
-            <span class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-gold-500 flex items-center justify-center text-xs font-display font-bold text-gold-400">
+          <div class="timeline-step relative pl-9 group" data-step="4">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               4
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
-              <span class="text-[10px] uppercase tracking-[0.25em] text-gold-500 font-semibold">Plática</span>
+              <span class="timeline-step-tag text-[10px] uppercase tracking-[0.25em] text-pearl-400 font-semibold transition-colors duration-500">Plática</span>
             </div>
-            <h3 class="font-display text-2xl text-pearl-100 font-medium mb-1 tracking-wide">
+            <h3 class="timeline-step-title font-display text-2xl text-pearl-200 font-medium mb-1 tracking-wide transition-colors duration-500">
               Momento para Convivir y Platicar
             </h3>
-            <p class="text-pearl-300 text-xs sm:text-sm leading-relaxed font-light">
+            <p class="timeline-step-desc text-pearl-300 text-xs sm:text-sm leading-relaxed font-light transition-colors duration-500">
               Espacio libre para charlar con los demás asistentes, comentar lo que más te gustó y disfrutar de la noche.
             </p>
           </div>
 
           <!-- Step 5 -->
-          <div class="relative pl-9 group">
-            <span class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400">
+          <div class="timeline-step relative pl-9 group" data-step="5">
+            <span class="timeline-step-badge absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-noir-900 border border-white/20 flex items-center justify-center text-xs font-display font-bold text-pearl-400 transition-all duration-500">
               5
             </span>
             <div class="md:absolute md:-left-40 md:top-1 md:text-right md:w-32 hidden md:block">
-              <span class="text-[10px] uppercase tracking-[0.25em] text-pearl-400 font-semibold">Despedida</span>
+              <span class="timeline-step-tag text-[10px] uppercase tracking-[0.25em] text-pearl-400 font-semibold transition-colors duration-500">Despedida</span>
             </div>
-            <h3 class="font-display text-2xl text-pearl-100 font-medium mb-1 tracking-wide">
+            <h3 class="timeline-step-title font-display text-2xl text-pearl-200 font-medium mb-1 tracking-wide transition-colors duration-500">
               Brindis de Cierre
             </h3>
-            <p class="text-pearl-300 text-xs sm:text-sm leading-relaxed font-light">
+            <p class="timeline-step-desc text-pearl-300 text-xs sm:text-sm leading-relaxed font-light transition-colors duration-500">
               Un último brindis juntos y entrega de una pequeña tarjeta con los vinos probados y recomendaciones locales.
             </p>
           </div>
@@ -778,16 +1112,18 @@
               <!-- Field: WhatsApp -->
               <div>
                 <label for="lead_phone" class="block text-[11px] font-semibold uppercase tracking-[0.2em] text-pearl-300 mb-2">
-                  WhatsApp / Celular <span class="text-pearl-400/60 font-normal">(Opcional)</span>
+                  WhatsApp / Celular <span id="phone-requirement-tag" class="text-pearl-400/60 font-normal">(Opcional)</span>
                 </label>
                 <input 
                   type="tel" 
                   id="lead_phone" 
                   name="phone" 
+                  inputmode="tel"
+                  autocomplete="tel"
                   placeholder="871 123 4567" 
                   class="w-full px-4 py-3.5 rounded-xl bg-noir-950/80 border border-white/10 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-pearl-100 placeholder:text-pearl-400/40 text-sm transition-all"
                 />
-                <span class="field-error text-xs text-rose-400 mt-1 hidden" id="error-lead_phone">Ingresa un teléfono a 10 dígitos.</span>
+                <span class="field-error text-xs text-rose-400 mt-1 hidden" id="error-lead_phone">Ingresa un teléfono válido a 10 dígitos (puedes incluir +52).</span>
               </div>
 
             </div>
@@ -905,42 +1241,50 @@
         <div class="space-y-4" id="faq-container">
           
           <div class="border border-white/10 rounded-2xl bg-noir-900/60 overflow-hidden transition-all">
-            <button class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
+            <button type="button" class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
               <span class="font-display text-base sm:text-lg text-pearl-100 font-medium tracking-wide">¿Dónde se realizará la experiencia?</span>
-              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300"></i>
+              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300 flex-shrink-0"></i>
             </button>
-            <div class="faq-content hidden px-6 pb-5 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 pt-3 font-light">
-              La propuesta contempla realizarse dentro de las salas del Museo Arocena, en el Centro Histórico de Torreón, Coahuila. La realización definitiva y los salones específicos quedan sujetos a las autorizaciones y convenios institucionales correspondientes.
+            <div class="faq-content" aria-hidden="true">
+              <div class="px-6 pb-5 pt-3 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 font-light">
+                La propuesta contempla realizarse dentro de las salas del Museo Arocena, en el Centro Histórico de Torreón, Coahuila. La realización definitiva y los salones específicos quedan sujetos a las autorizaciones y convenios institucionales correspondientes.
+              </div>
             </div>
           </div>
 
           <div class="border border-white/10 rounded-2xl bg-noir-900/60 overflow-hidden transition-all">
-            <button class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
+            <button type="button" class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
               <span class="font-display text-base sm:text-lg text-pearl-100 font-medium tracking-wide">¿Qué incluye la experiencia?</span>
-              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300"></i>
+              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300 flex-shrink-0"></i>
             </button>
-            <div class="faq-content hidden px-6 pb-5 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 pt-3 font-light">
-              Incluye acceso a puerta cerrada a salas del museo, paseo guiado por las obras, degustación de vinos explicada de forma amena, bocadillos para acompañar cada copa y un espacio relajado de convivencia.
+            <div class="faq-content" aria-hidden="true">
+              <div class="px-6 pb-5 pt-3 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 font-light">
+                Incluye acceso a puerta cerrada a salas del museo, paseo guiado por las obras, degustación de vinos explicada de forma amena, bocadillos para acompañar cada copa y un espacio relajado de convivencia.
+              </div>
             </div>
           </div>
 
           <div class="border border-white/10 rounded-2xl bg-noir-900/60 overflow-hidden transition-all">
-            <button class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
+            <button type="button" class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
               <span class="font-display text-base sm:text-lg text-pearl-100 font-medium tracking-wide">¿Cuándo estará disponible y cómo compro boletos?</span>
-              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300"></i>
+              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300 flex-shrink-0"></i>
             </button>
-            <div class="faq-content hidden px-6 pb-5 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 pt-3 font-light">
-              Actualmente estamos midiendo el interés del público. Al registrar tus datos, recibirás un aviso prioritario antes de que se abran fechas al público general. Por ahora no hay venta de boletos.
+            <div class="faq-content" aria-hidden="true">
+              <div class="px-6 pb-5 pt-3 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 font-light">
+                Actualmente estamos midiendo el interés del público. Al registrar tus datos, recibirás un aviso prioritario antes de que se abran fechas al público general. Por ahora no hay venta de boletos.
+              </div>
             </div>
           </div>
 
           <div class="border border-white/10 rounded-2xl bg-noir-900/60 overflow-hidden transition-all">
-            <button class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
+            <button type="button" class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none" aria-expanded="false">
               <span class="font-display text-base sm:text-lg text-pearl-100 font-medium tracking-wide">¿Necesito saber de vinos o de arte para ir?</span>
-              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300"></i>
+              <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-gold-400 transition-transform duration-300 flex-shrink-0"></i>
             </button>
-            <div class="faq-content hidden px-6 pb-5 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 pt-3 font-light">
-              Para nada. La experiencia está pensada para ser accesible, amena y divertida. El objetivo es disfrutar de una velada diferente en Torreón sin palabras rebuscadas ni tecnicismos.
+            <div class="faq-content" aria-hidden="true">
+              <div class="px-6 pb-5 pt-3 text-xs sm:text-sm text-pearl-300 leading-relaxed border-t border-white/5 font-light">
+                Para nada. La experiencia está pensada para ser accesible, amena y divertida. El objetivo es disfrutar de una velada diferente en Torreón sin palabras rebuscadas ni tecnicismos.
+              </div>
             </div>
           </div>
 
@@ -978,14 +1322,17 @@
           </ul>
         </div>
 
-        <div class="md:col-span-3 space-y-3">
+        <div class="md:col-span-3 space-y-2">
           <span class="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold-400 block mb-2">
-            Equipo Organizador
+            Sede Propuesta
           </span>
-          <button id="admin-panel-btn" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-noir-900 border border-gold-500/30 text-xs text-gold-300 hover:border-gold-400 transition-all">
-            <i data-lucide="database" class="w-3.5 h-3.5 text-gold-400"></i>
-            <span>Ver Leads Capturados</span>
-          </button>
+          <p class="text-xs text-pearl-400 leading-relaxed font-light">
+            Museo Arocena · Centro Histórico<br>
+            Torreón, Coahuila, México
+          </p>
+          <p class="text-[11px] text-pearl-400/70 font-light italic">
+            Propuesta conceptual sujeta a confirmación institucional.
+          </p>
         </div>
       </div>
 
@@ -1002,11 +1349,11 @@
   </footer>
 
   <!-- MODAL: AVISO DE PRIVACIDAD -->
-  <div id="privacy-modal" class="fixed inset-0 z-50 hidden bg-noir-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-noir-900 rounded-3xl max-w-2xl w-full p-8 max-h-[85vh] overflow-y-auto shadow-2xl border border-gold-500/20 text-pearl-200">
+  <div id="privacy-modal" class="fixed inset-0 z-50 hidden bg-noir-950/85 backdrop-blur-md flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title" aria-hidden="true">
+    <div data-lenis-prevent class="bg-noir-900 rounded-3xl max-w-2xl w-full p-8 max-h-[85vh] overflow-y-auto shadow-2xl border border-gold-500/20 text-pearl-200">
       <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-        <h3 class="font-display text-2xl text-pearl-100 font-semibold tracking-wide">Aviso de Privacidad</h3>
-        <button id="close-privacy-btn" class="text-pearl-400 hover:text-gold-400 p-1">
+        <h3 id="privacy-modal-title" class="font-display text-2xl text-pearl-100 font-semibold tracking-wide">Aviso de Privacidad</h3>
+        <button id="close-privacy-btn" type="button" aria-label="Cerrar aviso de privacidad" class="text-pearl-400 hover:text-gold-400 p-1">
           <i data-lucide="x" class="w-6 h-6"></i>
         </button>
       </div>
@@ -1016,387 +1363,880 @@
         <p><strong>Derechos ARCO:</strong> En cualquier momento podrá solicitar la cancelación o baja de sus datos solicitándolo vía correo.</p>
       </div>
       <div class="mt-6 pt-4 border-t border-white/10 text-right">
-        <button id="accept-privacy-btn" class="px-6 py-2 rounded-full wine-gradient-btn text-pearl-100 text-xs font-semibold uppercase tracking-wider">
+        <button id="accept-privacy-btn" type="button" class="px-6 py-2 rounded-full wine-gradient-btn text-pearl-100 text-xs font-semibold uppercase tracking-wider">
           Entendido
         </button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: PANEL DE LEADS PARA EL EQUIPO -->
-  <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-noir-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-noir-900 rounded-3xl max-w-3xl w-full p-8 max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-gold-500/20 text-pearl-200">
-      
-      <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-        <div>
-          <h3 class="font-display text-2xl text-pearl-100 font-semibold flex items-center gap-2 tracking-wide">
-            <i data-lucide="clipboard-list" class="w-6 h-6 text-gold-400"></i>
-            Registros de Interés Capturados
-          </h3>
-          <p class="text-xs text-pearl-400 font-light">Base de datos local del proyecto Vino & Arte.</p>
-        </div>
-        <button id="close-admin-btn" class="text-pearl-400 hover:text-gold-400 p-1">
-          <i data-lucide="x" class="w-6 h-6"></i>
-        </button>
-      </div>
+  <!-- Visor Lightbox a Pantalla Completa (Salas del Museo) -->
+  <div id="museum-lightbox" data-lenis-prevent class="fixed inset-0 z-50 flex items-center justify-center bg-noir-950/95 backdrop-blur-2xl" aria-hidden="true" aria-modal="true" aria-labelledby="lightbox-title" role="dialog">
+    <!-- Botón Cerrar -->
+    <button id="lightbox-close-btn" type="button" aria-label="Cerrar visor" class="absolute top-6 right-6 z-20 w-12 h-12 rounded-full glass-noir flex items-center justify-center text-pearl-200 hover:text-gold-400 hover:border-gold-500/50 transition-all shadow-xl">
+      <i data-lucide="x" class="w-6 h-6"></i>
+    </button>
 
-      <!-- Stats Bar -->
-      <div class="grid grid-cols-3 gap-4 mb-4 text-center">
-        <div class="p-3 bg-noir-850 rounded-xl border border-white/5">
-          <p class="text-[10px] text-pearl-400 uppercase font-semibold">Total Registros</p>
-          <p class="text-2xl font-display font-bold text-gold-400" id="admin-total-count">0</p>
-        </div>
-        <div class="p-3 bg-noir-850 rounded-xl border border-white/5">
-          <p class="text-[10px] text-pearl-400 uppercase font-semibold">Meta de Validación</p>
-          <p class="text-2xl font-display font-bold text-pearl-100">20</p>
-        </div>
-        <div class="p-3 bg-noir-850 rounded-xl border border-white/5">
-          <p class="text-[10px] text-pearl-400 uppercase font-semibold">Progreso</p>
-          <p class="text-2xl font-display font-bold text-wine-500" id="admin-progress-percent">0%</p>
-        </div>
-      </div>
+    <!-- Botón Anterior -->
+    <button id="lightbox-prev-btn" type="button" aria-label="Foto anterior" class="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-noir flex items-center justify-center text-pearl-200 hover:text-gold-400 hover:border-gold-500/50 transition-all shadow-xl">
+      <i data-lucide="chevron-left" class="w-6 h-6"></i>
+    </button>
 
-      <!-- Leads Table -->
-      <div class="flex-1 overflow-y-auto border border-white/10 rounded-xl">
-        <table class="w-full text-left text-xs text-pearl-300">
-          <thead class="bg-noir-850 uppercase font-semibold text-pearl-200 sticky top-0">
-            <tr>
-              <th class="p-3">Fecha</th>
-              <th class="p-3">Nombre</th>
-              <th class="p-3">Contacto</th>
-              <th class="p-3">Preferencia</th>
-              <th class="p-3">Intereses</th>
-            </tr>
-          </thead>
-          <tbody id="leads-table-body" class="divide-y divide-white/5"></tbody>
-        </table>
-        <div id="no-leads-msg" class="p-8 text-center text-pearl-400">
-          No hay registros de interés guardados.
-        </div>
-      </div>
+    <!-- Botón Siguiente -->
+    <button id="lightbox-next-btn" type="button" aria-label="Foto siguiente" class="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-noir flex items-center justify-center text-pearl-200 hover:text-gold-400 hover:border-gold-500/50 transition-all shadow-xl">
+      <i data-lucide="chevron-right" class="w-6 h-6"></i>
+    </button>
 
-      <!-- Actions -->
-      <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-        <button id="clear-leads-btn" class="text-xs text-rose-400 hover:text-rose-300 underline">
-          Borrar registros de prueba
-        </button>
-        <div class="flex items-center gap-2">
-          <button id="export-json-btn" class="px-4 py-2 rounded-full border border-white/20 text-xs font-semibold text-pearl-200 hover:bg-noir-800 transition-colors">
-            Exportar JSON
-          </button>
-          <button id="export-csv-btn" class="px-5 py-2 rounded-full wine-gradient-btn text-pearl-100 text-xs font-semibold uppercase tracking-wider transition-colors">
-            Descargar CSV
-          </button>
-        </div>
+    <!-- Contenido Central -->
+    <div class="lightbox-img-wrapper max-w-5xl max-h-[88vh] w-full px-6 flex flex-col items-center">
+      <div class="relative w-full rounded-2xl overflow-hidden border border-gold-500/30 shadow-2xl bg-noir-900 max-h-[68vh] flex items-center justify-center">
+        <img id="lightbox-img" src="" alt="" class="max-h-[68vh] w-full object-contain" />
       </div>
-
+      <!-- Ficha Técnica Editorial -->
+      <div class="mt-5 text-center max-w-2xl">
+        <span id="lightbox-counter" class="text-[10px] uppercase tracking-[0.3em] text-gold-400 font-medium"></span>
+        <h4 id="lightbox-title" class="font-display text-xl sm:text-2xl text-pearl-100 font-medium mt-1"></h4>
+        <p id="lightbox-desc" class="text-xs sm:text-sm text-pearl-300 font-light mt-1.5 leading-relaxed"></p>
+      </div>
     </div>
   </div>
 
+  <!-- Botón Flotante Acción Rápida en Móvil -->
+  <a id="mobile-action-pill" href="#registro" class="mobile-float-pill fixed bottom-6 right-6 z-40 sm:hidden inline-flex items-center gap-2 px-5 py-3 rounded-full wine-gradient-btn text-pearl-100 text-xs font-semibold uppercase tracking-[0.2em] shadow-2xl border border-gold-500/40">
+    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-400"></i>
+    <span>Registro</span>
+  </a>
+
   <!-- JAVASCRIPT -->
   <script>
-    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
 
-    // 1. Mobile Menu
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    document.querySelectorAll('.mobile-link').forEach(link => {
-      link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-    });
+      // 1. Mobile Menu
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('.mobile-link').forEach(link => {
+          link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+      }
 
-    // 2. FAQ Accordion
-    document.querySelectorAll('.faq-toggle').forEach(button => {
-      button.addEventListener('click', () => {
-        const content = button.nextElementSibling;
-        const icon = button.querySelector('.faq-icon');
-        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+      // 2. Lenis Smooth Scroll (inicializado antes de modales para gestionar scroll lock)
+      let lenis = null;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        document.querySelectorAll('.faq-toggle').forEach(otherBtn => {
-          if (otherBtn !== button) {
-            otherBtn.setAttribute('aria-expanded', 'false');
-            otherBtn.nextElementSibling.classList.add('hidden');
-            const otherIcon = otherBtn.querySelector('.faq-icon');
-            if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+      if (!prefersReducedMotion && typeof Lenis !== 'undefined') {
+        try {
+          lenis = new Lenis({
+            duration: 1.15,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            smoothWheel: true,
+            wheelMultiplier: 0.95,
+            touchMultiplier: 1.6,
+            infinite: false
+          });
+
+          if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => {
+              lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+          } else {
+            function raf(time) {
+              lenis.raf(time);
+              requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+          }
+        } catch (err) {
+          console.warn('Lenis no inicializado:', err);
+        }
+      }
+
+      function lockPageScroll() {
+        document.body.style.overflow = 'hidden';
+        if (lenis) lenis.stop();
+      }
+
+      function unlockPageScroll() {
+        document.body.style.overflow = '';
+        if (lenis) lenis.start();
+      }
+
+      // 3. FAQ Accordion con transición suave de altura y opacidad
+      const faqButtons = document.querySelectorAll('.faq-toggle');
+      function closeFaqItem(btn) {
+        const content = btn.nextElementSibling;
+        const icon = btn.querySelector('.faq-icon');
+        btn.setAttribute('aria-expanded', 'false');
+        if (content) {
+          content.style.maxHeight = '0px';
+          content.classList.remove('open');
+          content.setAttribute('aria-hidden', 'true');
+        }
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+
+      function openFaqItem(btn) {
+        const content = btn.nextElementSibling;
+        const icon = btn.querySelector('.faq-icon');
+        btn.setAttribute('aria-expanded', 'true');
+        if (content) {
+          content.classList.add('open');
+          content.style.maxHeight = content.scrollHeight + 'px';
+          content.setAttribute('aria-hidden', 'false');
+        }
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      }
+
+      faqButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const isExpanded = button.getAttribute('aria-expanded') === 'true';
+          faqButtons.forEach(otherBtn => {
+            if (otherBtn !== button) closeFaqItem(otherBtn);
+          });
+          if (isExpanded) {
+            closeFaqItem(button);
+          } else {
+            openFaqItem(button);
+          }
+          if (typeof ScrollTrigger !== 'undefined') {
+            setTimeout(() => ScrollTrigger.refresh(), 400);
+          }
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        faqButtons.forEach(btn => {
+          if (btn.getAttribute('aria-expanded') === 'true') {
+            const content = btn.nextElementSibling;
+            if (content) content.style.maxHeight = content.scrollHeight + 'px';
+          }
+        });
+      });
+
+      // 4. Leads Registration (sin almacenar PII en localStorage; confirmación estricta de Supabase)
+      try {
+        localStorage.removeItem('vino_y_arte_leads_v2');
+      } catch (_) {}
+
+      const form = document.getElementById('interest-form');
+      const successMsg = document.getElementById('form-success-message');
+      const resetFormBtn = document.getElementById('reset-form-btn');
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText = document.getElementById('btn-text');
+      const btnIcon = document.getElementById('btn-icon');
+      const btnSpinner = document.getElementById('btn-spinner');
+      const errorBanner = document.getElementById('form-error-banner');
+      const errorTitle = document.getElementById('form-error-title');
+      const errorDesc = document.getElementById('form-error-desc');
+      const phoneRequirementTag = document.getElementById('phone-requirement-tag');
+      const contactPrefRadios = document.querySelectorAll('input[name="contact_preference"]');
+
+      function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) && email.length <= 254;
+      }
+
+      // Normaliza números mexicanos (+52 / 0052 / +52 1) a 10 dígitos limpios
+      function normalizeMxPhone(rawValue) {
+        let digits = (rawValue || '').replace(/\D/g, '');
+        if (!digits) return '';
+        if (digits.length === 14 && digits.startsWith('0052')) {
+          digits = digits.slice(-10);
+        } else if (digits.length === 13 && digits.startsWith('521')) {
+          digits = digits.slice(-10);
+        } else if (digits.length === 12 && digits.startsWith('52')) {
+          digits = digits.slice(-10);
+        }
+        return digits;
+      }
+
+      function showFormBanner(title, desc) {
+        if (errorTitle) errorTitle.textContent = title;
+        if (errorDesc) errorDesc.textContent = desc;
+        if (errorBanner) errorBanner.classList.remove('hidden');
+      }
+
+      function updatePhoneLabel() {
+        const selected = document.querySelector('input[name="contact_preference"]:checked')?.value || 'email';
+        if (!phoneRequirementTag) return;
+        if (selected === 'whatsapp') {
+          phoneRequirementTag.textContent = '*';
+          phoneRequirementTag.className = 'text-gold-500';
+        } else {
+          phoneRequirementTag.textContent = '(Opcional)';
+          phoneRequirementTag.className = 'text-pearl-400/60 font-normal';
+        }
+      }
+
+      contactPrefRadios.forEach(radio => radio.addEventListener('change', updatePhoneLabel));
+      updatePhoneLabel();
+
+      const supabaseClient = (window.supabase && window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url && window.SUPABASE_CONFIG.anonKey)
+        ? window.supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey)
+        : null;
+
+      let isSubmitting = false;
+
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (isSubmitting) return;
+
+          document.querySelectorAll('.field-error').forEach(el => el.classList.add('hidden'));
+          errorBanner?.classList.add('hidden');
+
+          const honeypot = document.getElementById('company_website')?.value;
+          if (honeypot) {
+            form.classList.add('hidden');
+            successMsg?.classList.remove('hidden');
+            return;
+          }
+
+          const nameInput = document.getElementById('lead_name');
+          const emailInput = document.getElementById('lead_email');
+          const phoneInput = document.getElementById('lead_phone');
+          const consentInput = document.getElementById('lead_consent');
+          const contactPref = document.querySelector('input[name="contact_preference"]:checked')?.value || 'email';
+          const topics = Array.from(document.querySelectorAll('input[name="interest_topics"]:checked')).map(cb => cb.value);
+
+          const cleanName = (nameInput?.value || '').trim();
+          const cleanEmail = (emailInput?.value || '').trim().toLowerCase();
+          const rawPhone = (phoneInput?.value || '').trim();
+          const normalizedPhone = normalizeMxPhone(rawPhone);
+
+          let hasError = false;
+
+          if (cleanName.length < 2 || cleanName.length > 120) {
+            const nameErr = document.getElementById('error-lead_name');
+            if (nameErr) {
+              nameErr.textContent = cleanName.length < 2
+                ? 'Por favor ingresa tu nombre completo (mínimo 2 caracteres).'
+                : 'El nombre no puede superar los 120 caracteres.';
+              nameErr.classList.remove('hidden');
+            }
+            hasError = true;
+          }
+
+          if (!isValidEmail(cleanEmail)) {
+            document.getElementById('error-lead_email')?.classList.remove('hidden');
+            hasError = true;
+          }
+
+          const phoneErrEl = document.getElementById('error-lead_phone');
+          if (contactPref === 'whatsapp' && normalizedPhone.length !== 10) {
+            if (phoneErrEl) {
+              phoneErrEl.textContent = 'Se requiere un teléfono válido a 10 dígitos para contactarte por WhatsApp.';
+              phoneErrEl.classList.remove('hidden');
+            }
+            hasError = true;
+          } else if (rawPhone && normalizedPhone.length !== 10) {
+            if (phoneErrEl) {
+              phoneErrEl.textContent = 'El teléfono debe contener exactamente 10 dígitos (puedes incluir prefijo +52).';
+              phoneErrEl.classList.remove('hidden');
+            }
+            hasError = true;
+          }
+
+          if (!consentInput?.checked) {
+            document.getElementById('error-lead_consent')?.classList.remove('hidden');
+            hasError = true;
+          }
+
+          if (hasError) {
+            showFormBanner(
+              'Revisa los datos ingresados.',
+              'Asegúrate de completar correctamente los campos obligatorios antes de enviar.'
+            );
+            return;
+          }
+
+          if (!supabaseClient) {
+            showFormBanner(
+              'Servicio de registro no disponible.',
+              'No se pudo inicializar la conexión con la base de datos. Inténtalo nuevamente en unos momentos.'
+            );
+            return;
+          }
+
+          isSubmitting = true;
+          submitBtn.disabled = true;
+          btnText.textContent = 'Guardando...';
+          btnIcon?.classList.add('hidden');
+          btnSpinner?.classList.remove('hidden');
+
+          try {
+            const payload = {
+              name: cleanName,
+              email: cleanEmail,
+              phone: normalizedPhone || null,
+              contact_preference: contactPref,
+              topics: topics,
+              consent: true,
+              consent_accepted_at: new Date().toISOString()
+            };
+
+            const { error: sbError } = await supabaseClient
+              .from('leads')
+              .insert([payload]);
+
+            if (sbError) {
+              console.error('Supabase insert error:', sbError);
+              showFormBanner(
+                'No pudimos guardar tu registro en este momento.',
+                'Revisa tus datos o tu conexión e inténtalo nuevamente. Tu información sigue aquí para que no tengas que volver a escribirla.'
+              );
+              return;
+            }
+
+            // Solo confirmamos éxito cuando Supabase confirma que el registro fue guardado
+            form.classList.add('hidden');
+            successMsg?.classList.remove('hidden');
+            form.reset();
+            updatePhoneLabel();
+          } catch (err) {
+            console.error('Network/Supabase exception:', err);
+            showFormBanner(
+              'Problema de conexión al enviar tu registro.',
+              'No pudimos comunicarnos con el servidor. Verifica tu conexión a internet e inténtalo nuevamente.'
+            );
+          } finally {
+            isSubmitting = false;
+            submitBtn.disabled = false;
+            btnText.textContent = 'Quiero Recibir Novedades';
+            btnIcon?.classList.remove('hidden');
+            btnSpinner?.classList.add('hidden');
+          }
+        });
+      }
+
+      resetFormBtn?.addEventListener('click', () => {
+        successMsg?.classList.add('hidden');
+        errorBanner?.classList.add('hidden');
+        form?.classList.remove('hidden');
+      });
+
+      // 5. Modal: Aviso de Privacidad (Escape, clic fuera y control de scroll)
+      const privacyModal = document.getElementById('privacy-modal');
+      const openPrivacyLink = document.getElementById('open-privacy-link');
+      const footerPrivacyBtn = document.getElementById('footer-privacy-btn');
+      const closePrivacyBtn = document.getElementById('close-privacy-btn');
+      const acceptPrivacyBtn = document.getElementById('accept-privacy-btn');
+
+      function openPrivacyModal() {
+        if (!privacyModal) return;
+        privacyModal.classList.remove('hidden');
+        privacyModal.setAttribute('aria-hidden', 'false');
+        lockPageScroll();
+      }
+
+      function closePrivacyModal() {
+        if (!privacyModal || privacyModal.classList.contains('hidden')) return;
+        privacyModal.classList.add('hidden');
+        privacyModal.setAttribute('aria-hidden', 'true');
+        unlockPageScroll();
+      }
+
+      [openPrivacyLink, footerPrivacyBtn].forEach(el => el?.addEventListener('click', openPrivacyModal));
+      [closePrivacyBtn, acceptPrivacyBtn].forEach(el => el?.addEventListener('click', closePrivacyModal));
+
+      privacyModal?.addEventListener('click', (e) => {
+        if (e.target === privacyModal) closePrivacyModal();
+      });
+
+      // 6. Hero Scroll-Driven Canvas Storytelling + Fallback adaptativo por dispositivo
+      (function initHeroScrollExperience() {
+        const heroSection = document.getElementById('hero');
+        const heroCanvas = document.getElementById('hero-canvas');
+        const heroPoster = document.getElementById('hero-poster-img');
+        const heroMediaWrap = document.getElementById('hero-media-wrap');
+        const heroWineAura = document.getElementById('hero-wine-aura');
+        const heroScrollCue = document.getElementById('hero-scroll-cue');
+
+        if (!heroSection || !heroCanvas || !heroPoster) return;
+
+        const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const saveData = Boolean(conn && conn.saveData);
+        const slowNetwork = Boolean(conn && (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g'));
+        const lowMemory = Boolean(navigator.deviceMemory && navigator.deviceMemory <= 2);
+        const lowCores = Boolean(navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+        const canUseGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+
+        const useLightweightMode = prefersReducedMotion || saveData || slowNetwork || (!isDesktop && (lowMemory || lowCores)) || !canUseGsap;
+
+        const folder = isDesktop ? 'images/hero-frames/desktop' : 'images/hero-frames/mobile';
+        const frameCount = isDesktop ? 96 : 48;
+        const pad3 = (n) => String(n).padStart(3, '0');
+        const frameUrl = (idx) => `${folder}/frame_${pad3(idx)}.jpg`;
+
+        // Fallback ligero: muestra directamente la copa llena serena sin descargar secuencia ni fijar scroll
+        if (useLightweightMode) {
+          heroPoster.src = frameUrl(frameCount - 1);
+          if (heroWineAura) heroWineAura.style.opacity = '0.55';
+          if (heroScrollCue) heroScrollCue.style.display = 'none';
+          return;
+        }
+
+        // Asegurar póster inicial acorde al dispositivo
+        heroPoster.src = frameUrl(0);
+
+        const ctx = heroCanvas.getContext('2d', { alpha: false });
+        if (!ctx) {
+          heroPoster.src = frameUrl(frameCount - 1);
+          return;
+        }
+
+        const images = new Array(frameCount);
+        const loaded = new Array(frameCount).fill(false);
+        let targetIndex = 0;
+        let lastDrawnIndex = -1;
+        let rafPending = false;
+        let canvasActivated = false;
+
+        function resizeCanvas() {
+          const rect = heroMediaWrap.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const w = Math.max(1, Math.round(rect.width * dpr));
+          const h = Math.max(1, Math.round(rect.height * dpr));
+          if (heroCanvas.width !== w || heroCanvas.height !== h) {
+            heroCanvas.width = w;
+            heroCanvas.height = h;
+            lastDrawnIndex = -1;
+          }
+          scheduleDraw();
+        }
+
+        function findClosestLoaded(idx) {
+          if (loaded[idx]) return idx;
+          for (let offset = 1; offset < frameCount; offset++) {
+            if (idx - offset >= 0 && loaded[idx - offset]) return idx - offset;
+            if (idx + offset < frameCount && loaded[idx + offset]) return idx + offset;
+          }
+          return -1;
+        }
+
+        function drawFrame() {
+          rafPending = false;
+          const idx = findClosestLoaded(targetIndex);
+          if (idx === -1 || idx === lastDrawnIndex) return;
+
+          const img = images[idx];
+          if (!img || !img.naturalWidth) return;
+
+          const cw = heroCanvas.width;
+          const ch = heroCanvas.height;
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, cw, ch);
+
+          const imgRatio = img.naturalWidth / img.naturalHeight;
+          const desktopNow = window.matchMedia('(min-width: 1024px)').matches;
+
+          let drawW, drawH, drawX, drawY;
+          if (desktopNow) {
+            // Encuadre de campaña de lujo (+48% escala) respetando proporción 9:16 exacta:
+            // copa monumental cercana al centro visual con la botella emergiendo de la sombra izquierda
+            const maxZoomH = ch * 1.48;
+            const maxZoomW = maxZoomH * imgRatio;
+            if (maxZoomW > cw * 0.96) {
+              drawW = cw * 0.96;
+              drawH = drawW / imgRatio;
+            } else {
+              drawH = maxZoomH;
+              drawW = maxZoomW;
+            }
+            drawX = 0;
+            drawY = -(drawH * 0.24);
+            // Mantiene el pie de la copa (94.5% de la altura fuente) dentro del encuadre
+            const footY = drawY + drawH * 0.945;
+            if (footY > ch * 0.99) {
+              drawY -= (footY - ch * 0.99);
+            }
+          } else {
+            // Móvil: copa protagonista centrada entre el titular superior y el CTA inferior
+            const baseScale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
+            const mobileZoom = 1.07;
+            drawW = img.naturalWidth * baseScale * mobileZoom;
+            drawH = img.naturalHeight * baseScale * mobileZoom;
+            drawX = (cw - drawW) / 2;
+            drawY = (ch - drawH) / 2 + ch * 0.045;
+          }
+
+          ctx.drawImage(img, drawX, drawY, drawW, drawH);
+          lastDrawnIndex = idx;
+
+          if (!canvasActivated) {
+            canvasActivated = true;
+            heroCanvas.style.opacity = '1';
+            heroPoster.style.opacity = '0';
+          }
+        }
+
+        function scheduleDraw() {
+          if (rafPending) return;
+          rafPending = true;
+          requestAnimationFrame(drawFrame);
+        }
+
+        // Precarga progresiva en dos fases: primero fotogramas clave (cada 3), luego intermedios en lotes
+        function loadFrame(i) {
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.decoding = 'async';
+            img.onload = () => {
+              images[i] = img;
+              loaded[i] = true;
+              if (i === 0 || Math.abs(i - targetIndex) <= 3) {
+                scheduleDraw();
+              }
+              resolve();
+            };
+            img.onerror = () => resolve();
+            img.src = frameUrl(i);
+          });
+        }
+
+        async function preloadSequence() {
+          const priority = [];
+          const secondary = [];
+          for (let i = 0; i < frameCount; i++) {
+            if (i === 0 || i === frameCount - 1 || i % 3 === 0) {
+              priority.push(i);
+            } else {
+              secondary.push(i);
+            }
+          }
+
+          await loadFrame(0);
+          resizeCanvas();
+
+          const queue = priority.slice(1).concat(secondary);
+          const concurrency = isDesktop ? 6 : 4;
+          let cursor = 0;
+
+          async function worker() {
+            while (cursor < queue.length) {
+              const nextIdx = queue[cursor++];
+              await loadFrame(nextIdx);
+            }
+          }
+
+          await Promise.all(Array.from({ length: concurrency }, worker));
+          scheduleDraw();
+        }
+
+        preloadSequence();
+        window.addEventListener('resize', resizeCanvas, { passive: true });
+
+        // Apertura editorial inicial
+        gsap.registerPlugin(ScrollTrigger);
+        const heroEditorialCol = document.getElementById('hero-editorial-col');
+        const heroIntro = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        heroIntro
+          .from('#hero-media-wrap', {
+            opacity: 0.25,
+            scale: 1.02,
+            duration: 1.2,
+            ease: 'power2.out'
+          })
+          .from('.hero-anim-elem', {
+            y: 20,
+            opacity: 0,
+            duration: 0.85,
+            stagger: 0.14
+          }, '-=0.85');
+
+        // Scroll scrubbing natural SIN pin ni pausa artificial:
+        // La página avanza libremente desde el primer píxel mientras el vino llena la copa y la siguiente sección aparece de forma orgánica.
+        // Al detener el scroll, el video se detiene en el fotograma exacto; al subir, retrocede suavemente.
+        const playhead = { frame: 0 };
+        const heroScrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: document.documentElement,
+            start: 0,
+            end: () => Math.max(260, Math.round(heroSection.offsetHeight * (isDesktop ? 0.68 : 0.60))),
+            scrub: 0.15,
+            pin: false,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              if (heroScrollCue) {
+                heroScrollCue.style.opacity = self.progress > 0.06 ? '0' : '0.75';
+              }
+            }
           }
         });
 
-        if (isExpanded) {
-          button.setAttribute('aria-expanded', 'false');
-          content.classList.add('hidden');
-          icon.style.transform = 'rotate(0deg)';
-        } else {
-          button.setAttribute('aria-expanded', 'true');
-          content.classList.remove('hidden');
-          icon.style.transform = 'rotate(180deg)';
-        }
-      });
-    });
-
-    // 3. Leads Storage
-    const STORAGE_KEY = 'vino_y_arte_leads_v2';
-    const form = document.getElementById('interest-form');
-    const successMsg = document.getElementById('form-success-message');
-    const resetFormBtn = document.getElementById('reset-form-btn');
-    const submitBtn = document.getElementById('submit-btn');
-    const btnText = document.getElementById('btn-text');
-    const btnIcon = document.getElementById('btn-icon');
-    const btnSpinner = document.getElementById('btn-spinner');
-    const errorBanner = document.getElementById('form-error-banner');
-
-    function getSavedLeads() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveLead(lead) {
-      const leads = getSavedLeads();
-      leads.push(lead);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
-    }
-
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      document.querySelectorAll('.field-error').forEach(el => el.classList.add('hidden'));
-      errorBanner.classList.add('hidden');
-
-      const honeypot = document.getElementById('company_website').value;
-      if (honeypot) {
-        form.classList.add('hidden');
-        successMsg.classList.remove('hidden');
-        return;
-      }
-
-      const nameInput = document.getElementById('lead_name');
-      const emailInput = document.getElementById('lead_email');
-      const phoneInput = document.getElementById('lead_phone');
-      const consentInput = document.getElementById('lead_consent');
-      const contactPref = document.querySelector('input[name="contact_preference"]:checked')?.value || 'email';
-      const topics = Array.from(document.querySelectorAll('input[name="interest_topics"]:checked')).map(cb => cb.value);
-
-      let hasError = false;
-
-      if (!nameInput.value.trim()) {
-        document.getElementById('error-lead_name').classList.remove('hidden');
-        hasError = true;
-      }
-
-      if (!nameInput.value.trim() || !isValidEmail(emailInput.value.trim())) {
-        document.getElementById('error-lead_email').classList.remove('hidden');
-        hasError = true;
-      }
-
-      const cleanPhone = phoneInput.value.replace(/\D/g, '');
-      if (contactPref === 'whatsapp' && cleanPhone.length < 10) {
-        document.getElementById('error-lead_phone').textContent = 'Se requiere un teléfono a 10 dígitos para WhatsApp.';
-        document.getElementById('error-lead_phone').classList.remove('hidden');
-        hasError = true;
-      } else if (phoneInput.value.trim() && cleanPhone.length < 10) {
-        document.getElementById('error-lead_phone').textContent = 'El teléfono debe contener 10 dígitos.';
-        document.getElementById('error-lead_phone').classList.remove('hidden');
-        hasError = true;
-      }
-
-      if (!consentInput.checked) {
-        document.getElementById('error-lead_consent').classList.remove('hidden');
-        hasError = true;
-      }
-
-      if (hasError) {
-        errorBanner.classList.remove('hidden');
-        return;
-      }
-
-      const existingLeads = getSavedLeads();
-      const isDuplicate = existingLeads.some(l => l.email.toLowerCase() === emailInput.value.trim().toLowerCase());
-
-      submitBtn.disabled = true;
-      btnText.textContent = 'Procesando...';
-      btnIcon.classList.add('hidden');
-      btnSpinner.classList.remove('hidden');
-
-      setTimeout(async () => {
-        const newLead = {
-          id: 'lead_' + Date.now(),
-          timestamp: new Date().toISOString(),
-          formattedDate: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-          name: nameInput.value.trim(),
-          email: emailInput.value.trim().toLowerCase(),
-          phone: phoneInput.value.trim(),
-          contactPreference: contactPref,
-          topics: topics,
-          isDuplicate: isDuplicate
-        };
-
-        saveLead(newLead);
-
-        // Envío en tiempo real a Supabase (con fallback directo a tu proyecto de Museo Arocena)
-        const sbUrl = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url) ? window.SUPABASE_CONFIG.url : 'https://hbkidqzahlzxpmsrvyio.supabase.co';
-        const sbKey = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.anonKey) ? window.SUPABASE_CONFIG.anonKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhia2lkcXphaGx6eHBtc3J2eWlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMzk1NjYsImV4cCI6MjExMDYxNTU2Nn0.4gj-tglj-b4R09ucGbujWGvkeXoHkHI2b2fKoEMxpbU';
-
-        if (window.supabase && sbUrl && sbKey) {
-          try {
-            const sbClient = window.supabase.createClient(sbUrl, sbKey);
-            const { error: sbError } = await sbClient.from('leads').insert([{
-              name: newLead.name,
-              email: newLead.email,
-              phone: newLead.phone || null,
-              contact_preference: newLead.contactPreference,
-              topics: newLead.topics,
-              is_duplicate: newLead.isDuplicate
-            }]);
-            if (sbError) {
-              console.warn('Supabase insert issue:', sbError);
+        heroScrollTl
+          .to(playhead, {
+            frame: frameCount - 1,
+            ease: 'none',
+            duration: 1,
+            onUpdate: () => {
+              const next = Math.max(0, Math.min(frameCount - 1, Math.round(playhead.frame)));
+              if (next !== targetIndex) {
+                targetIndex = next;
+                scheduleDraw();
+              }
             }
-          } catch (err) {
-            console.warn('Registro local preservado. Supabase error:', err);
-          }
+          }, 0)
+          .to(heroMediaWrap, {
+            yPercent: isDesktop ? 10 : 6,
+            scale: isDesktop ? 1.035 : 1.02,
+            ease: 'none',
+            duration: 1
+          }, 0);
+
+        if (heroWineAura) {
+          heroScrollTl.to(heroWineAura, {
+            opacity: 0.78,
+            scale: 1.14,
+            ease: 'none',
+            duration: 1
+          }, 0);
         }
+      })();
 
-        submitBtn.disabled = false;
-        btnText.textContent = 'Quiero Recibir Novedades';
-        btnIcon.classList.remove('hidden');
-        btnSpinner.classList.add('hidden');
+      // 7. GSAP Core Storytelling & Scroll Animations (resto de secciones)
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !prefersReducedMotion) {
+        gsap.registerPlugin(ScrollTrigger);
 
-        form.classList.add('hidden');
-        successMsg.classList.remove('hidden');
-        form.reset();
-        updateAdminTable();
-      }, 700);
-    });
+        document.querySelectorAll('.scroll-reveal').forEach((elem) => {
+          gsap.from(elem, {
+            y: 35,
+            opacity: 0,
+            duration: 0.85,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: elem,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          });
+        });
 
-    resetFormBtn.addEventListener('click', () => {
-      successMsg.classList.add('hidden');
-      form.classList.remove('hidden');
-    });
+        const timelineTrack = document.getElementById('timeline-container');
+        const progressBar = document.getElementById('timeline-progress-bar');
 
-    // Modals
-    const privacyModal = document.getElementById('privacy-modal');
-    const openPrivacyLink = document.getElementById('open-privacy-link');
-    const footerPrivacyBtn = document.getElementById('footer-privacy-btn');
-    const closePrivacyBtn = document.getElementById('close-privacy-btn');
-    const acceptPrivacyBtn = document.getElementById('accept-privacy-btn');
+        if (timelineTrack && progressBar) {
+          gsap.to(progressBar, {
+            height: '100%',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: timelineTrack,
+              start: 'top 65%',
+              end: 'bottom 65%',
+              scrub: 0.4
+            }
+          });
 
-    [openPrivacyLink, footerPrivacyBtn].forEach(el => el?.addEventListener('click', () => privacyModal.classList.remove('hidden')));
-    [closePrivacyBtn, acceptPrivacyBtn].forEach(el => el?.addEventListener('click', () => privacyModal.classList.add('hidden')));
+          function activateTimelineStep(el) {
+            const badge = el.querySelector('.timeline-step-badge');
+            const title = el.querySelector('.timeline-step-title');
+            const tag = el.querySelector('.timeline-step-tag');
+            if (badge) {
+              badge.classList.remove('border-white/20', 'text-pearl-400', 'bg-noir-900');
+              badge.classList.add('border-gold-400', 'text-gold-300', 'bg-wine-900/80', 'node-active-pulse');
+            }
+            if (title) {
+              title.classList.remove('text-pearl-200');
+              title.classList.add('text-pearl-100');
+            }
+            if (tag) {
+              tag.classList.remove('text-pearl-400');
+              tag.classList.add('text-gold-400');
+            }
+          }
 
-    // Admin Panel
-    const adminModal = document.getElementById('admin-modal');
-    const adminPanelBtn = document.getElementById('admin-panel-btn');
-    const closeAdminBtn = document.getElementById('close-admin-btn');
-    const leadsTableBody = document.getElementById('leads-table-body');
-    const noLeadsMsg = document.getElementById('no-leads-msg');
-    const adminTotalCount = document.getElementById('admin-total-count');
-    const adminProgressPercent = document.getElementById('admin-progress-percent');
-    const clearLeadsBtn = document.getElementById('clear-leads-btn');
-    const exportJsonBtn = document.getElementById('export-json-btn');
-    const exportCsvBtn = document.getElementById('export-csv-btn');
+          function deactivateTimelineStep(el) {
+            const badge = el.querySelector('.timeline-step-badge');
+            const title = el.querySelector('.timeline-step-title');
+            const tag = el.querySelector('.timeline-step-tag');
+            const stepNum = el.getAttribute('data-step');
+            if (stepNum !== '1') {
+              if (badge) {
+                badge.classList.add('border-white/20', 'text-pearl-400', 'bg-noir-900');
+                badge.classList.remove('border-gold-400', 'text-gold-300', 'bg-wine-900/80', 'node-active-pulse');
+              }
+              if (title) {
+                title.classList.add('text-pearl-200');
+                title.classList.remove('text-pearl-100');
+              }
+              if (tag) {
+                tag.classList.add('text-pearl-400');
+                tag.classList.remove('text-gold-400');
+              }
+            }
+          }
 
-    function updateAdminTable() {
-      const leads = getSavedLeads();
-      adminTotalCount.textContent = leads.length;
-      const pct = Math.min(100, Math.round((leads.length / 20) * 100));
-      adminProgressPercent.textContent = pct + '%';
-
-      if (leads.length === 0) {
-        leadsTableBody.innerHTML = '';
-        noLeadsMsg.classList.remove('hidden');
-        return;
+          document.querySelectorAll('.timeline-step').forEach((stepElem) => {
+            ScrollTrigger.create({
+              trigger: stepElem,
+              start: 'top 68%',
+              onEnter: () => activateTimelineStep(stepElem),
+              onLeaveBack: () => deactivateTimelineStep(stepElem)
+            });
+          });
+        }
       }
 
-      noLeadsMsg.classList.add('hidden');
-      leadsTableBody.innerHTML = leads.slice().reverse().map(l => `
-        <tr class="hover:bg-noir-850">
-          <td class="p-3 text-[11px] text-pearl-400 whitespace-nowrap">${l.formattedDate || l.timestamp.slice(0,10)}</td>
-          <td class="p-3 font-semibold text-pearl-100">${l.name} ${l.isDuplicate ? '<span class="text-[9px] text-amber-400 bg-amber-950 px-1.5 py-0.5 rounded border border-amber-800">Duplicado</span>' : ''}</td>
-          <td class="p-3">${l.email}<br><span class="text-pearl-400">${l.phone || 'Sin tel'}</span></td>
-          <td class="p-3 uppercase font-medium text-[10px] tracking-wider text-gold-400">${l.contactPreference}</td>
-          <td class="p-3 text-pearl-400 text-[11px]">${l.topics.join(', ') || 'General'}</td>
-        </tr>
-      `).join('');
-    }
-
-    adminPanelBtn.addEventListener('click', () => {
-      updateAdminTable();
-      adminModal.classList.remove('hidden');
-    });
-
-    closeAdminBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
-
-    clearLeadsBtn.addEventListener('click', () => {
-      if (confirm('¿Deseas vaciar los leads guardados localmente?')) {
-        localStorage.removeItem(STORAGE_KEY);
-        updateAdminTable();
+      // 7. Spotlight Cursor Effect en tarjetas glassmórficas
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.querySelectorAll('.spotlight-card').forEach((card) => {
+          card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+          });
+        });
       }
-    });
 
-    exportJsonBtn.addEventListener('click', () => {
-      const leads = getSavedLeads();
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(leads, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `leads_vino_y_arte_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    });
-
-    exportCsvBtn.addEventListener('click', () => {
-      const leads = getSavedLeads();
-      if (leads.length === 0) {
-        alert('No hay registros para exportar.');
-        return;
-      }
-      let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "ID,Fecha,Nombre,Correo,Telefono,Preferencia,Intereses,EsDuplicado\n";
-      leads.forEach(l => {
-        csvContent += `"${l.id}","${l.timestamp}","${l.name}","${l.email}","${l.phone || ''}","${l.contactPreference}","${(l.topics || []).join(';')}",${l.isDuplicate || false}\n`;
-      });
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `leads_vino_y_arte_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    });
-
-    if (getSavedLeads().length === 0) {
-      const demoLeads = [
+      // 8. Visor Lightbox a Pantalla Completa (Salas del Museo y Momentos)
+      const galleryData = [
         {
-          id: 'lead_demo_01',
-          timestamp: new Date(Date.now() - 3600000 * 5).toISOString(),
-          formattedDate: 'Hoy, 06:15 PM',
-          name: 'Sofía Valdés',
-          email: 'sofia.valdes@ejemplo.com',
-          phone: '8712345678',
-          contactPreference: 'whatsapp',
-          topics: ['fechas', 'precios', 'vinos'],
-          isDuplicate: false
+          src: 'images/arocena-sala-valencianos.jpg',
+          title: 'Gran Sala de los Primitivos Valencianos',
+          desc: 'Pisos de madera relucientes, colecciones virreinales y mobiliario de época del Museo Arocena.'
         },
         {
-          id: 'lead_demo_02',
-          timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
-          formattedDate: 'Hoy, 08:40 PM',
-          name: 'Rodrigo De la Peña',
-          email: 'rodrigo.dlp@ejemplo.com',
-          phone: '',
-          contactPreference: 'email',
-          topics: ['gastronomia', 'actividades'],
-          isDuplicate: false
+          src: 'images/arocena-sala-escultura.jpg',
+          title: 'Sala de Arte & Escultura Monumental',
+          desc: 'Muros en negro profundo, iluminación de acento y diálogo contemporáneo en el Centro Histórico de Torreón.'
+        },
+        {
+          src: 'images/arocena-sala-moderna.jpg',
+          title: 'Salas Contemporáneas',
+          desc: 'Espacios amplios y silenciosos ideales para la contemplación detenida y la tertulia íntima.'
+        },
+        {
+          src: 'images/museum-night-crowd.jpg',
+          title: 'Convivencia a Puerta Cerrada',
+          desc: 'Una atmósfera cercana y relajada para comentar las piezas y disfrutar con amigos o en pareja.'
+        },
+        {
+          src: 'images/coahuila-wine-bottles.jpg',
+          title: 'Vinos de Nuestra Región',
+          desc: 'Etiquetas selectas de bodegas coahuilenses maridadas con canapés y bocadillos de autor.'
+        },
+        {
+          src: 'images/wine-toast.jpg',
+          title: 'El Brindis Sensorial',
+          desc: 'Copa de cortesía y degustación guiada para celebrar el encuentro entre arte y vino.'
+        },
+        {
+          src: 'images/hero-wine-pour.webp',
+          title: 'Cata Guiada de Vinos',
+          desc: 'Aprende a identificar aromas, notas y estilos con explicaciones amenas y sencillas.'
         }
       ];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoLeads));
-      updateAdminTable();
-    }
+
+      let currentLightboxIdx = 0;
+      const lightboxElem = document.getElementById('museum-lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxTitle = document.getElementById('lightbox-title');
+      const lightboxDesc = document.getElementById('lightbox-desc');
+      const lightboxCounter = document.getElementById('lightbox-counter');
+      const lightboxCloseBtn = document.getElementById('lightbox-close-btn');
+      const lightboxPrevBtn = document.getElementById('lightbox-prev-btn');
+      const lightboxNextBtn = document.getElementById('lightbox-next-btn');
+
+      function openLightbox(index) {
+        if (!lightboxElem || !lightboxImg) return;
+        currentLightboxIdx = (index + galleryData.length) % galleryData.length;
+        const item = galleryData[currentLightboxIdx];
+        lightboxImg.src = item.src;
+        lightboxImg.alt = item.title;
+        if (lightboxTitle) lightboxTitle.textContent = item.title;
+        if (lightboxDesc) lightboxDesc.textContent = item.desc;
+        if (lightboxCounter) {
+          lightboxCounter.textContent = `${String(currentLightboxIdx + 1).padStart(2, '0')} / ${String(galleryData.length).padStart(2, '0')}`;
+        }
+        lightboxElem.classList.add('active');
+        lightboxElem.setAttribute('aria-hidden', 'false');
+        lockPageScroll();
+      }
+
+      function closeLightbox() {
+        if (!lightboxElem || !lightboxElem.classList.contains('active')) return;
+        lightboxElem.classList.remove('active');
+        lightboxElem.setAttribute('aria-hidden', 'true');
+        unlockPageScroll();
+      }
+
+      function nextLightbox() {
+        openLightbox(currentLightboxIdx + 1);
+      }
+
+      function prevLightbox() {
+        openLightbox(currentLightboxIdx - 1);
+      }
+
+      document.querySelectorAll('.lightbox-trigger').forEach((trigger) => {
+        trigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          const idx = parseInt(trigger.getAttribute('data-lightbox-index') || '0', 10);
+          openLightbox(idx);
+        });
+      });
+
+      lightboxCloseBtn?.addEventListener('click', closeLightbox);
+      lightboxNextBtn?.addEventListener('click', nextLightbox);
+      lightboxPrevBtn?.addEventListener('click', prevLightbox);
+
+      lightboxElem?.addEventListener('click', (e) => {
+        if (e.target === lightboxElem) closeLightbox();
+      });
+
+      // Controles globales de teclado para Lightbox y Modal de Privacidad
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (lightboxElem?.classList.contains('active')) {
+            closeLightbox();
+            return;
+          }
+          if (privacyModal && !privacyModal.classList.contains('hidden')) {
+            closePrivacyModal();
+            return;
+          }
+        }
+        if (!lightboxElem?.classList.contains('active')) return;
+        if (e.key === 'ArrowRight') nextLightbox();
+        if (e.key === 'ArrowLeft') prevLightbox();
+      });
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+      lightboxElem?.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      lightboxElem?.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 50) nextLightbox();
+        if (touchEndX - touchStartX > 50) prevLightbox();
+      }, { passive: true });
+
+      // 9. Botón Flotante Acción Rápida en Móvil
+      const mobileActionPill = document.getElementById('mobile-action-pill');
+      if (mobileActionPill) {
+        const updateMobilePill = () => {
+          if (window.scrollY > 450) {
+            mobileActionPill.classList.add('visible');
+          } else {
+            mobileActionPill.classList.remove('visible');
+          }
+        };
+        window.addEventListener('scroll', updateMobilePill, { passive: true });
+        updateMobilePill();
+      }
+    });
   </script>
 </body>
 </html>
