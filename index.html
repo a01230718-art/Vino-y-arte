@@ -114,7 +114,7 @@
     }
 
     .hero-title-shadow {
-      text-shadow: 0 4px 35px rgba(0, 0, 0, 0.98), 0 2px 14px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 4px 40px rgba(0, 0, 0, 1), 0 2px 16px rgba(0, 0, 0, 0.98), 0 0 10px rgba(0, 0, 0, 0.9);
     }
 
     .wine-gradient-btn {
@@ -157,23 +157,23 @@
           VINO & ARTE
         </span>
         <span class="text-[9px] uppercase tracking-[0.35em] text-gold-500/80 font-medium mt-0.5">
-          Museo Arocena · A Puerta Cerrada
+          Museo Arocena
         </span>
       </a>
 
       <!-- Desktop Nav -->
       <nav class="hidden md:flex items-center gap-9 text-xs uppercase tracking-[0.2em] text-pearl-300 font-medium">
-        <a href="#experiencia" class="hover:text-gold-400 transition-colors">La Propuesta</a>
+        <a href="#experiencia" class="hover:text-gold-400 transition-colors">Propuesta</a>
         <a href="#que-viviras" class="hover:text-gold-400 transition-colors">¿Qué vivirás?</a>
         <a href="#salas-museo" class="hover:text-gold-400 transition-colors">Salas del Museo</a>
-        <a href="#recorrido" class="hover:text-gold-400 transition-colors">El Recorrido</a>
+        <a href="#recorrido" class="hover:text-gold-400 transition-colors">Recorrido</a>
         <a href="#faqs" class="hover:text-gold-400 transition-colors">Preguntas</a>
       </nav>
 
       <!-- CTA -->
       <div class="flex items-center gap-4">
-        <a href="#registro" class="hidden sm:inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold text-gold-300 border border-gold-500/40 hover:border-gold-400 bg-noir-850 hover:bg-wine-900/60 shadow-lg hover:shadow-glow-wine transition-all duration-300">
-          Registrar Interés
+        <a href="#registro" class="hidden sm:inline-flex items-center justify-center text-center px-7 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold text-gold-300 border border-gold-500/40 hover:border-gold-400 bg-noir-850 hover:bg-wine-900/60 shadow-lg hover:shadow-glow-wine transition-all duration-300 whitespace-nowrap leading-normal">
+          Registro
         </a>
 
         <!-- Mobile Menu Button -->
@@ -186,13 +186,13 @@
     <!-- Mobile Menu Dropdown -->
     <div id="mobile-menu" class="hidden md:hidden bg-noir-900/98 border-b border-gold-500/20 px-6 py-6 transition-all backdrop-blur-2xl">
       <div class="flex flex-col gap-4 text-xs uppercase tracking-[0.2em] text-pearl-300">
-        <a href="#experiencia" class="mobile-link py-2 border-b border-white/5">La Propuesta</a>
+        <a href="#experiencia" class="mobile-link py-2 border-b border-white/5">Propuesta</a>
         <a href="#que-viviras" class="mobile-link py-2 border-b border-white/5">¿Qué vivirás?</a>
         <a href="#salas-museo" class="mobile-link py-2 border-b border-white/5">Salas del Museo</a>
-        <a href="#recorrido" class="mobile-link py-2 border-b border-white/5">El Recorrido</a>
+        <a href="#recorrido" class="mobile-link py-2 border-b border-white/5">Recorrido</a>
         <a href="#faqs" class="mobile-link py-2 border-b border-white/5">Preguntas</a>
         <a href="#registro" class="mobile-link mt-2 text-center py-3.5 wine-gradient-btn text-pearl-100 rounded-full font-semibold">
-          Quiero Conocer Más
+          Registro
         </a>
       </div>
     </div>
@@ -203,32 +203,26 @@
     <!-- HERO SECTION (Imagen claramente visible de vino y arte + letras nítidas) -->
     <section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden px-6 py-24 lg:py-36">
       
-      <!-- Fondo: Imagen claramente visible de brindis y copas de vino con iluminación cálida -->
+      <!-- Fondo: Imagen claramente visible de copas y vino con iluminación cálida -->
       <div class="absolute inset-0 z-0">
         <img 
           src="images/wine-toast.jpg" 
-          alt="Brindis con copas de vino tinto en un entorno exclusivo" 
-          class="w-full h-full object-cover object-center opacity-75 scale-105 transform hover:scale-100 transition-transform duration-1000 ease-out filter contrast-110"
+          alt="Copas de vino y brindis en un ambiente elegante" 
+          class="w-full h-full object-cover object-center opacity-80 filter brightness-90 contrast-105"
         />
-        <!-- Viñeta suave en los bordes para mantener la foto visible al centro sin perder contraste -->
-        <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/40 to-noir-950/60"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-noir-950/70 via-transparent to-noir-950/70"></div>
+        <!-- Viñeta suave en los bordes para mantener la foto de vino visible sin perder contraste -->
+        <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/30 to-noir-950/60"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-noir-950/60 via-transparent to-noir-950/60"></div>
       </div>
 
       <!-- Hero Content sin caja opaca: el fondo de vino se ve claramente y las letras se leen a la perfección -->
       <div class="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
-        
-        <!-- Tag superior -->
-        <div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-gold-500/50 bg-noir-950/80 backdrop-blur-md text-gold-300 text-[11px] uppercase tracking-[0.3em] mb-8 shadow-glow-gold">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-400"></i>
-          <span>Experiencia a Puerta Cerrada · Torreón</span>
-        </div>
 
-        <!-- Headline con sombra pronunciada para contraste nítido sobre la imagen de vino -->
-        <div class="relative py-4 px-6 rounded-3xl bg-noir-950/40 backdrop-blur-[3px] border border-white/5 mb-8 shadow-2xl max-w-4xl">
-          <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-[0.08em] text-white leading-[1.08] hero-title-shadow uppercase">
-            El Arte Se Encuentra <br class="hidden sm:inline" />
-            <span class="font-serif italic font-normal gold-gradient-text lowercase text-5xl sm:text-7xl lg:text-8xl xl:text-9xl tracking-normal block mt-2 drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+        <!-- Headline flotante: elegancia editorial clásica como antes -->
+        <div class="relative mb-10 max-w-4xl">
+          <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-[0.06em] text-white leading-[1.12] hero-title-shadow">
+            EL ARTE SE ENCUENTRA <br class="hidden sm:inline" />
+            <span class="font-serif italic font-normal text-gold-400 tracking-normal block mt-1">
               con el vino.
             </span>
           </h1>
@@ -252,7 +246,7 @@
         <!-- Metric Badges Strip (Actualizado: 'A Puerta Cerrada' en vez de nocturna) -->
         <div class="mt-16 pt-10 border-t border-white/10 w-full grid grid-cols-2 md:grid-cols-4 gap-8 text-center bg-noir-950/60 backdrop-blur-sm rounded-2xl p-6">
           <div>
-            <p class="font-display text-2xl lg:text-3xl text-gold-400 font-semibold tracking-wider">~15</p>
+            <p class="font-display text-2xl lg:text-3xl text-gold-400 font-semibold tracking-wider">15</p>
             <p class="text-[10px] uppercase tracking-[0.25em] text-pearl-400 mt-1">Personas por cata</p>
           </div>
           <div>
@@ -569,7 +563,7 @@
           <div class="md:col-span-4 relative rounded-2xl overflow-hidden border border-white/10 group h-[220px]">
             <img 
               src="images/wine-toast.jpg" 
-              alt="Brindis nocturno" 
+              alt="Brindis y convivencia a puerta cerrada" 
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-noir-950 via-transparent to-transparent"></div>
@@ -976,10 +970,11 @@
             Navegación
           </span>
           <ul class="text-xs space-y-2 font-light">
-            <li><a href="#experiencia" class="hover:text-gold-300 transition-colors">La Propuesta</a></li>
+            <li><a href="#experiencia" class="hover:text-gold-300 transition-colors">Propuesta</a></li>
             <li><a href="#que-viviras" class="hover:text-gold-300 transition-colors">¿Qué vivirás?</a></li>
             <li><a href="#salas-museo" class="hover:text-gold-300 transition-colors">Salas del Museo</a></li>
-            <li><a href="#registro" class="hover:text-gold-300 transition-colors">Registrar Interés</a></li>
+            <li><a href="#recorrido" class="hover:text-gold-300 transition-colors">Recorrido</a></li>
+            <li><a href="#registro" class="hover:text-gold-300 transition-colors">Registro</a></li>
           </ul>
         </div>
 
@@ -1243,11 +1238,14 @@
 
         saveLead(newLead);
 
-        // Envío en tiempo real a Supabase si está configurado
-        if (window.supabase && window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey) {
+        // Envío en tiempo real a Supabase (con fallback directo a tu proyecto de Museo Arocena)
+        const sbUrl = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url) ? window.SUPABASE_CONFIG.url : 'https://hbkidqzahlzxpmsrvyio.supabase.co';
+        const sbKey = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.anonKey) ? window.SUPABASE_CONFIG.anonKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhia2lkcXphaGx6eHBtc3J2eWlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMzk1NjYsImV4cCI6MjExMDYxNTU2Nn0.4gj-tglj-b4R09ucGbujWGvkeXoHkHI2b2fKoEMxpbU';
+
+        if (window.supabase && sbUrl && sbKey) {
           try {
-            const sbClient = window.supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey);
-            await sbClient.from('leads').insert([{
+            const sbClient = window.supabase.createClient(sbUrl, sbKey);
+            const { error: sbError } = await sbClient.from('leads').insert([{
               name: newLead.name,
               email: newLead.email,
               phone: newLead.phone || null,
@@ -1255,6 +1253,9 @@
               topics: newLead.topics,
               is_duplicate: newLead.isDuplicate
             }]);
+            if (sbError) {
+              console.warn('Supabase insert issue:', sbError);
+            }
           } catch (err) {
             console.warn('Registro local preservado. Supabase error:', err);
           }
@@ -1296,4 +1297,106 @@
     const adminTotalCount = document.getElementById('admin-total-count');
     const adminProgressPercent = document.getElementById('admin-progress-percent');
     const clearLeadsBtn = document.getElementById('clear-leads-btn');
-    const exportJsonBtn = document.getElementById(
+    const exportJsonBtn = document.getElementById('export-json-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
+
+    function updateAdminTable() {
+      const leads = getSavedLeads();
+      adminTotalCount.textContent = leads.length;
+      const pct = Math.min(100, Math.round((leads.length / 20) * 100));
+      adminProgressPercent.textContent = pct + '%';
+
+      if (leads.length === 0) {
+        leadsTableBody.innerHTML = '';
+        noLeadsMsg.classList.remove('hidden');
+        return;
+      }
+
+      noLeadsMsg.classList.add('hidden');
+      leadsTableBody.innerHTML = leads.slice().reverse().map(l => `
+        <tr class="hover:bg-noir-850">
+          <td class="p-3 text-[11px] text-pearl-400 whitespace-nowrap">${l.formattedDate || l.timestamp.slice(0,10)}</td>
+          <td class="p-3 font-semibold text-pearl-100">${l.name} ${l.isDuplicate ? '<span class="text-[9px] text-amber-400 bg-amber-950 px-1.5 py-0.5 rounded border border-amber-800">Duplicado</span>' : ''}</td>
+          <td class="p-3">${l.email}<br><span class="text-pearl-400">${l.phone || 'Sin tel'}</span></td>
+          <td class="p-3 uppercase font-medium text-[10px] tracking-wider text-gold-400">${l.contactPreference}</td>
+          <td class="p-3 text-pearl-400 text-[11px]">${l.topics.join(', ') || 'General'}</td>
+        </tr>
+      `).join('');
+    }
+
+    adminPanelBtn.addEventListener('click', () => {
+      updateAdminTable();
+      adminModal.classList.remove('hidden');
+    });
+
+    closeAdminBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
+
+    clearLeadsBtn.addEventListener('click', () => {
+      if (confirm('¿Deseas vaciar los leads guardados localmente?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateAdminTable();
+      }
+    });
+
+    exportJsonBtn.addEventListener('click', () => {
+      const leads = getSavedLeads();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(leads, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `leads_vino_y_arte_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
+
+    exportCsvBtn.addEventListener('click', () => {
+      const leads = getSavedLeads();
+      if (leads.length === 0) {
+        alert('No hay registros para exportar.');
+        return;
+      }
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "ID,Fecha,Nombre,Correo,Telefono,Preferencia,Intereses,EsDuplicado\n";
+      leads.forEach(l => {
+        csvContent += `"${l.id}","${l.timestamp}","${l.name}","${l.email}","${l.phone || ''}","${l.contactPreference}","${(l.topics || []).join(';')}",${l.isDuplicate || false}\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `leads_vino_y_arte_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
+
+    if (getSavedLeads().length === 0) {
+      const demoLeads = [
+        {
+          id: 'lead_demo_01',
+          timestamp: new Date(Date.now() - 3600000 * 5).toISOString(),
+          formattedDate: 'Hoy, 06:15 PM',
+          name: 'Sofía Valdés',
+          email: 'sofia.valdes@ejemplo.com',
+          phone: '8712345678',
+          contactPreference: 'whatsapp',
+          topics: ['fechas', 'precios', 'vinos'],
+          isDuplicate: false
+        },
+        {
+          id: 'lead_demo_02',
+          timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+          formattedDate: 'Hoy, 08:40 PM',
+          name: 'Rodrigo De la Peña',
+          email: 'rodrigo.dlp@ejemplo.com',
+          phone: '',
+          contactPreference: 'email',
+          topics: ['gastronomia', 'actividades'],
+          isDuplicate: false
+        }
+      ];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoLeads));
+      updateAdminTable();
+    }
+  </script>
+</body>
+</html>
