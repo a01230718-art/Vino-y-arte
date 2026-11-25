@@ -2004,23 +2004,12 @@
             stagger: 0.14
           }, '-=0.85');
 
-        // Scroll scrubbing diferenciado:
-        // - Escritorio (>= 1024px): sin cambios (scroll libre sin pin, recorrido 68% de la altura del Hero)
-        // - Móvil (< 1024px): recorrido cinematográfico ~2.3x más amplio (~950px) con acompañamiento suave bajo el header
-        //   para que el vino suba gradualmente siguiendo el dedo sin llenarse de golpe ni dejar espacios vacíos.
+        // Scroll scrubbing continuo SIN pin ni bloqueo en escritorio ni móvil:
+        // - Escritorio (>= 1024px): sin cambios (recorrido 68% de la altura del Hero, scrub 0.15)
+        // - Móvil (< 1024px): sin pin (la página avanza 1:1 desde el primer píxel hacia #experiencia),
+        //   pero con un recorrido más extenso (~96% de la altura del Hero, mín. 640px) y ligero contraparalaje
+        //   en la copa para que el vino suba más lento y gradual mientras navegas de forma natural.
         const playhead = { frame: 0 };
-
-        if (!isDesktop) {
-          ScrollTrigger.create({
-            trigger: heroSection,
-            start: 'top 80px',
-            end: () => `+=${Math.round(heroSection.offsetHeight * 0.95)}`,
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true
-          });
-        }
 
         const heroScrollTl = gsap.timeline({
           scrollTrigger: {
@@ -2028,8 +2017,8 @@
             start: 0,
             end: () => isDesktop
               ? Math.max(260, Math.round(heroSection.offsetHeight * 0.68))
-              : Math.max(860, Math.round(heroSection.offsetHeight * 1.38)),
-            scrub: isDesktop ? 0.15 : 0.42,
+              : Math.max(640, Math.round(heroSection.offsetHeight * 0.96)),
+            scrub: isDesktop ? 0.15 : 0.25,
             pin: false,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
@@ -2054,7 +2043,7 @@
             }
           }, 0)
           .to(heroMediaWrap, {
-            yPercent: isDesktop ? 10 : 2,
+            yPercent: isDesktop ? 10 : 16,
             scale: isDesktop ? 1.035 : 1.025,
             ease: 'none',
             duration: 1
