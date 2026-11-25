@@ -2225,15 +2225,31 @@
         });
       }
 
+      // Respaldo automático de rutas de imágenes (funciona tanto en images/ como en raíz /)
+      document.querySelectorAll('img[src^="images/secret-spot-"]').forEach((imgEl) => {
+        const fallbackSrc = imgEl.getAttribute('src').replace(/^images\//, '');
+        const applyFallback = () => {
+          if (imgEl.dataset.rootFallbackApplied) return;
+          imgEl.dataset.rootFallbackApplied = '1';
+          imgEl.src = fallbackSrc;
+        };
+        imgEl.addEventListener('error', applyFallback);
+        if (imgEl.complete && imgEl.naturalWidth === 0) {
+          applyFallback();
+        }
+      });
+
       // 8. Visor Lightbox a Pantalla Completa (Atmósfera Secret Spot y Momentos)
       const galleryData = [
         {
           src: 'images/secret-spot-gallery.jpg',
+          fallbackSrc: 'secret-spot-gallery.jpg',
           title: 'Salón Privado de Arte',
           desc: 'Un Secret Spot por descubrir: muros oscuros, iluminación cálida y piezas en diálogo silencioso a puerta cerrada.'
         },
         {
           src: 'images/secret-spot-atmosphere.jpg',
+          fallbackSrc: 'secret-spot-atmosphere.jpg',
           title: 'A Secret Spot Experience',
           desc: 'Arquitectura en penumbra, haces de luz ámbar y el encanto de un lugar inesperado para vivir algo diferente.'
         },
@@ -2249,6 +2265,7 @@
         },
         {
           src: 'images/secret-spot-tasting.jpg',
+          fallbackSrc: 'secret-spot-tasting.jpg',
           title: 'Vinos y Bocadillos a la Luz de las Velas',
           desc: 'Selección curada de etiquetas maridadas con canapés y bocadillos artesanales para resaltar cada copa.'
         },
@@ -2273,6 +2290,12 @@
         if (!lightboxElem || !lightboxImg) return;
         currentLightboxIdx = (index + galleryData.length) % galleryData.length;
         const item = galleryData[currentLightboxIdx];
+        lightboxImg.onerror = item.fallbackSrc
+          ? () => {
+              lightboxImg.onerror = null;
+              lightboxImg.src = item.fallbackSrc;
+            }
+          : null;
         lightboxImg.src = item.src;
         lightboxImg.alt = item.title;
         if (lightboxTitle) lightboxTitle.textContent = item.title;
