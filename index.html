@@ -117,6 +117,15 @@
       border: 1px solid rgba(212, 175, 55, 0.16);
     }
 
+    /* Encabezado limpio sin marco rectangular dorado */
+    .glass-noir-header {
+      background: rgba(6, 6, 7, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
     .glass-noir-card {
       background: linear-gradient(155deg, rgba(22, 22, 29, 0.78) 0%, rgba(10, 10, 13, 0.94) 100%);
       backdrop-filter: blur(16px);
@@ -367,15 +376,15 @@
   </aside>
 
   <!-- Navigation / Header -->
-  <header class="sticky top-0 z-40 glass-noir transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-6 lg:px-12 h-24 flex items-center justify-between">
+  <header class="sticky top-0 z-40 glass-noir-header transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-12 h-20 lg:h-24 flex items-center justify-between">
       
       <!-- Brand Logo -->
       <a href="#" class="group flex flex-col">
-        <span class="font-display text-2xl lg:text-3xl tracking-[0.22em] font-semibold text-pearl-100 group-hover:text-gold-400 transition-colors">
+        <span class="font-display text-xl sm:text-2xl lg:text-3xl tracking-[0.2em] sm:tracking-[0.22em] font-semibold text-pearl-100 group-hover:text-gold-400 transition-colors">
           VINO & ARTE
         </span>
-        <span class="text-[9px] uppercase tracking-[0.35em] text-gold-500/80 font-medium mt-0.5">
+        <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.32em] sm:tracking-[0.35em] text-gold-500/80 font-medium mt-0.5">
           A Secret Spot Experience
         </span>
       </a>
@@ -403,7 +412,7 @@
     </div>
 
     <!-- Mobile Menu Dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden bg-noir-900/98 border-b border-gold-500/20 px-6 py-6 transition-all backdrop-blur-2xl">
+    <div id="mobile-menu" class="hidden md:hidden bg-noir-950/95 border-b border-white/10 px-6 py-6 transition-all backdrop-blur-2xl">
       <div class="flex flex-col gap-4 text-xs uppercase tracking-[0.2em] text-pearl-300">
         <a href="#experiencia" class="mobile-link py-2 border-b border-white/5">Propuesta</a>
         <a href="#que-viviras" class="mobile-link py-2 border-b border-white/5">¿Qué vivirás?</a>
@@ -420,7 +429,7 @@
   <main class="relative z-10">
 
     <!-- HERO SECTION (Portada Editorial Cinemática vinculada al scroll) -->
-    <section id="hero" class="relative w-full h-[calc(100svh-10.25rem)] min-h-[540px] lg:h-[calc(100vh-6rem)] lg:min-h-[600px] bg-black overflow-hidden">
+    <section id="hero" class="relative w-full h-[calc(100svh-9.25rem)] min-h-[520px] lg:h-[calc(100vh-6rem)] lg:min-h-[600px] bg-black overflow-hidden">
 
       <!-- Escenario del video/canvas: copa protagonista ampliada y desplazada hacia el centro-izquierda en escritorio -->
       <div id="hero-visual-stage" class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -462,7 +471,7 @@
       <!-- Composición Editorial:
            - Escritorio: composición de campaña de lujo donde copa y titular forman un solo bloque visual equilibrado
            - Móvil: titular arriba y descripción + CTA abajo, dejando la copa despejada en el centro -->
-      <div class="relative z-10 h-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 flex flex-col justify-between lg:justify-center pt-3 pb-5 sm:pt-6 sm:pb-8 lg:py-0">
+      <div class="relative z-10 h-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 flex flex-col justify-between lg:justify-center pt-4 pb-5 sm:pt-6 sm:pb-8 lg:py-0">
         <div id="hero-editorial-col" class="lg:ml-[42%] xl:ml-[41%] lg:w-[56%] xl:w-[55%] max-w-2xl h-full lg:h-auto flex flex-col justify-between lg:justify-center text-center lg:text-left will-change-transform">
 
           <!-- Bloque superior (Micro-etiqueta + Titular de campaña) -->
@@ -1897,13 +1906,13 @@
               drawY -= (footY - ch * 0.99);
             }
           } else {
-            // Móvil: copa protagonista centrada entre el titular superior y el CTA inferior
+            // Móvil: copa protagonista centrada y equilibrada entre el titular superior y el CTA inferior
             const baseScale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
-            const mobileZoom = 1.07;
+            const mobileZoom = 1.05;
             drawW = img.naturalWidth * baseScale * mobileZoom;
             drawH = img.naturalHeight * baseScale * mobileZoom;
             drawX = (cw - drawW) / 2;
-            drawY = (ch - drawH) / 2 + ch * 0.045;
+            drawY = (ch - drawH) / 2 + ch * 0.04;
           }
 
           ctx.drawImage(img, drawX, drawY, drawW, drawH);
@@ -1995,16 +2004,32 @@
             stagger: 0.14
           }, '-=0.85');
 
-        // Scroll scrubbing natural SIN pin ni pausa artificial:
-        // La página avanza libremente desde el primer píxel mientras el vino llena la copa y la siguiente sección aparece de forma orgánica.
-        // Al detener el scroll, el video se detiene en el fotograma exacto; al subir, retrocede suavemente.
+        // Scroll scrubbing diferenciado:
+        // - Escritorio (>= 1024px): sin cambios (scroll libre sin pin, recorrido 68% de la altura del Hero)
+        // - Móvil (< 1024px): recorrido cinematográfico ~2.3x más amplio (~950px) con acompañamiento suave bajo el header
+        //   para que el vino suba gradualmente siguiendo el dedo sin llenarse de golpe ni dejar espacios vacíos.
         const playhead = { frame: 0 };
+
+        if (!isDesktop) {
+          ScrollTrigger.create({
+            trigger: heroSection,
+            start: 'top 80px',
+            end: () => `+=${Math.round(heroSection.offsetHeight * 0.95)}`,
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true
+          });
+        }
+
         const heroScrollTl = gsap.timeline({
           scrollTrigger: {
             trigger: document.documentElement,
             start: 0,
-            end: () => Math.max(260, Math.round(heroSection.offsetHeight * (isDesktop ? 0.68 : 0.60))),
-            scrub: 0.15,
+            end: () => isDesktop
+              ? Math.max(260, Math.round(heroSection.offsetHeight * 0.68))
+              : Math.max(860, Math.round(heroSection.offsetHeight * 1.38)),
+            scrub: isDesktop ? 0.15 : 0.42,
             pin: false,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
@@ -2029,8 +2054,8 @@
             }
           }, 0)
           .to(heroMediaWrap, {
-            yPercent: isDesktop ? 10 : 6,
-            scale: isDesktop ? 1.035 : 1.02,
+            yPercent: isDesktop ? 10 : 2,
+            scale: isDesktop ? 1.035 : 1.025,
             ease: 'none',
             duration: 1
           }, 0);
